@@ -1,0 +1,1077 @@
+--========================================================
+-- 1000x LUCK
+-- PREMIUM AUTO RNG UI
+-- REALISTIC LOADING + 89% STUCK FOR 5 MINUTES
+--========================================================
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+--========================================================
+-- SETTINGS
+--========================================================
+
+local STUCK_TIME = 300 -- 5 MINUTES
+local SPIN_DELAY = 0.5
+
+local AutoSpin = false
+local MaxLuck = false
+local AutoBuy = false
+
+--========================================================
+-- COLORS
+--========================================================
+
+local COLORS = {
+	Background = Color3.fromRGB(7, 7, 12),
+	Panel = Color3.fromRGB(14, 14, 22),
+	Card = Color3.fromRGB(21, 21, 33),
+	CardHover = Color3.fromRGB(28, 27, 43),
+
+	White = Color3.fromRGB(245, 245, 255),
+	Light = Color3.fromRGB(210, 210, 225),
+	Gray = Color3.fromRGB(125, 125, 145),
+	DarkGray = Color3.fromRGB(65, 65, 82),
+
+	Purple = Color3.fromRGB(125, 82, 255),
+	Blue = Color3.fromRGB(65, 170, 255),
+	Pink = Color3.fromRGB(205, 75, 255),
+
+	Green = Color3.fromRGB(45, 215, 135),
+	Yellow = Color3.fromRGB(255, 195, 75),
+	Red = Color3.fromRGB(255, 80, 100)
+}
+
+--========================================================
+-- SCREEN GUI
+--========================================================
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "AutoRNG"
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.ResetOnSpawn = false
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.Parent = PlayerGui
+
+--========================================================
+-- FULLSCREEN LOADING
+--========================================================
+
+local Loading = Instance.new("Frame")
+Loading.Name = "LoadingScreen"
+Loading.Size = UDim2.fromScale(1, 1)
+Loading.Position = UDim2.fromScale(0, 0)
+Loading.BackgroundColor3 = COLORS.Background
+Loading.BorderSizePixel = 0
+Loading.ZIndex = 100
+Loading.Parent = ScreenGui
+
+local LoadingGradient = Instance.new("UIGradient")
+LoadingGradient.Rotation = 35
+LoadingGradient.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(5, 5, 12)),
+	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(22, 12, 42)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(5, 10, 20))
+})
+LoadingGradient.Parent = Loading
+
+--========================================================
+-- LOADING CENTER
+--========================================================
+
+local Center = Instance.new("Frame")
+Center.AnchorPoint = Vector2.new(0.5, 0.5)
+Center.Position = UDim2.fromScale(0.5, 0.5)
+Center.Size = UDim2.fromScale(0.65, 0.40)
+Center.BackgroundTransparency = 1
+Center.ZIndex = 101
+Center.Parent = Loading
+
+--========================================================
+-- LOADING TITLE
+--========================================================
+
+local LoadingTitle = Instance.new("TextLabel")
+LoadingTitle.AnchorPoint = Vector2.new(0.5, 0)
+LoadingTitle.Position = UDim2.fromScale(0.5, 0)
+LoadingTitle.Size = UDim2.fromScale(1, 0.18)
+LoadingTitle.BackgroundTransparency = 1
+LoadingTitle.Font = Enum.Font.GothamBlack
+LoadingTitle.Text = "✦  1000x LUCK  ✦"
+LoadingTitle.TextScaled = true
+LoadingTitle.TextColor3 = COLORS.White
+LoadingTitle.ZIndex = 102
+LoadingTitle.Parent = Center
+
+local LoadingTitleGradient = Instance.new("UIGradient")
+LoadingTitleGradient.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, COLORS.Purple),
+	ColorSequenceKeypoint.new(0.5, COLORS.White),
+	ColorSequenceKeypoint.new(1, COLORS.Blue)
+})
+LoadingTitleGradient.Parent = LoadingTitle
+
+--========================================================
+-- LOADING SUBTITLE
+--========================================================
+
+local Subtitle = Instance.new("TextLabel")
+Subtitle.AnchorPoint = Vector2.new(0.5, 0)
+Subtitle.Position = UDim2.fromScale(0.5, 0.21)
+Subtitle.Size = UDim2.fromScale(1, 0.07)
+Subtitle.BackgroundTransparency = 1
+Subtitle.Font = Enum.Font.GothamMedium
+Subtitle.Text = "🍀 MAXIMUM LUCK SYSTEM"
+Subtitle.TextScaled = true
+Subtitle.TextColor3 = COLORS.Gray
+Subtitle.ZIndex = 102
+Subtitle.Parent = Center
+
+--========================================================
+-- PROGRESS BAR
+--========================================================
+
+local BarBackground = Instance.new("Frame")
+BarBackground.AnchorPoint = Vector2.new(0.5, 0)
+BarBackground.Position = UDim2.fromScale(0.5, 0.47)
+BarBackground.Size = UDim2.fromScale(0.78, 0.055)
+BarBackground.BackgroundColor3 = Color3.fromRGB(27, 27, 41)
+BarBackground.BorderSizePixel = 0
+BarBackground.ZIndex = 102
+BarBackground.Parent = Center
+
+local BarBGCorner = Instance.new("UICorner")
+BarBGCorner.CornerRadius = UDim.new(1, 0)
+BarBGCorner.Parent = BarBackground
+
+local Bar = Instance.new("Frame")
+Bar.Size = UDim2.fromScale(0, 1)
+Bar.BackgroundColor3 = COLORS.Purple
+Bar.BorderSizePixel = 0
+Bar.ZIndex = 103
+Bar.Parent = BarBackground
+
+local BarCorner = Instance.new("UICorner")
+BarCorner.CornerRadius = UDim.new(1, 0)
+BarCorner.Parent = Bar
+
+local BarGradient = Instance.new("UIGradient")
+BarGradient.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(85, 65, 255)),
+	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(190, 80, 255)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(65, 175, 255))
+})
+BarGradient.Parent = Bar
+
+--========================================================
+-- PERCENT
+--========================================================
+
+local Percent = Instance.new("TextLabel")
+Percent.AnchorPoint = Vector2.new(0.5, 0)
+Percent.Position = UDim2.fromScale(0.5, 0.58)
+Percent.Size = UDim2.fromScale(1, 0.10)
+Percent.BackgroundTransparency = 1
+Percent.Font = Enum.Font.GothamBlack
+Percent.Text = "0%"
+Percent.TextScaled = true
+Percent.TextColor3 = COLORS.White
+Percent.ZIndex = 102
+Percent.Parent = Center
+
+--========================================================
+-- LOADING STATUS
+--========================================================
+
+local LoadingStatus = Instance.new("TextLabel")
+LoadingStatus.AnchorPoint = Vector2.new(0.5, 0)
+LoadingStatus.Position = UDim2.fromScale(0.5, 0.70)
+LoadingStatus.Size = UDim2.fromScale(1, 0.07)
+LoadingStatus.BackgroundTransparency = 1
+LoadingStatus.Font = Enum.Font.Gotham
+LoadingStatus.Text = "Preparing..."
+LoadingStatus.TextScaled = true
+LoadingStatus.TextColor3 = COLORS.Gray
+LoadingStatus.ZIndex = 102
+LoadingStatus.Parent = Center
+
+--========================================================
+-- PROGRESS FUNCTION
+--========================================================
+
+local function SetProgress(Number)
+
+	Number = math.clamp(Number, 0, 100)
+
+	Percent.Text = Number .. "%"
+
+	TweenService:Create(
+		Bar,
+		TweenInfo.new(
+			0.15,
+			Enum.EasingStyle.Quad,
+			Enum.EasingDirection.Out
+		),
+		{
+			Size = UDim2.fromScale(Number / 100, 1)
+		}
+	):Play()
+
+end
+
+--========================================================
+-- REALISTIC LOADING
+--========================================================
+
+task.spawn(function()
+
+	--====================================================
+	-- 0 - 15%
+	--====================================================
+
+	for i = 0, 15 do
+
+		SetProgress(i)
+
+		LoadingStatus.Text = "Initializing luck modules..."
+
+		task.wait(0.18 + math.random() * 0.10)
+
+	end
+
+	--====================================================
+	-- 16 - 35%
+	--====================================================
+
+	for i = 16, 35 do
+
+		SetProgress(i)
+
+		LoadingStatus.Text = "Loading probability engine..."
+
+		task.wait(0.20 + math.random() * 0.12)
+
+	end
+
+	--====================================================
+	-- 36 - 55%
+	--====================================================
+
+	for i = 36, 55 do
+
+		SetProgress(i)
+
+		LoadingStatus.Text = "Calculating luck parameters..."
+
+		task.wait(0.22 + math.random() * 0.12)
+
+	end
+
+	--====================================================
+	-- 56 - 72%
+	--====================================================
+
+	for i = 56, 72 do
+
+		SetProgress(i)
+
+		LoadingStatus.Text = "Synchronizing RNG systems..."
+
+		task.wait(0.24 + math.random() * 0.13)
+
+	end
+
+	--====================================================
+	-- 73 - 84%
+	--====================================================
+
+	for i = 73, 84 do
+
+		SetProgress(i)
+
+		LoadingStatus.Text = "Optimizing luck engine..."
+
+		task.wait(0.27 + math.random() * 0.14)
+
+	end
+
+	--====================================================
+	-- 85 - 88%
+	--====================================================
+
+	for i = 85, 88 do
+
+		SetProgress(i)
+
+		LoadingStatus.Text = "Final luck calibration..."
+
+		task.wait(0.35 + math.random() * 0.15)
+
+	end
+
+	--====================================================
+	-- EXACTLY 89%
+	--====================================================
+
+	SetProgress(89)
+
+	Percent.Text = "89%"
+	Bar.Size = UDim2.fromScale(0.89, 1)
+
+	-- NO COUNTDOWN
+	LoadingStatus.Text = "Finalizing luck calibration..."
+
+	--====================================================
+	-- STUCK FOR EXACTLY 5 MINUTES
+	--====================================================
+
+	task.wait(STUCK_TIME)
+
+	--====================================================
+	-- 90 - 94%
+	--====================================================
+
+	for i = 90, 94 do
+
+		SetProgress(i)
+
+		LoadingStatus.Text = "Applying luck boost..."
+
+		task.wait(0.35)
+
+	end
+
+	--====================================================
+	-- 95 - 98%
+	--====================================================
+
+	for i = 95, 98 do
+
+		SetProgress(i)
+
+		LoadingStatus.Text = "Finalizing 1000x luck..."
+
+		task.wait(0.45)
+
+	end
+
+	--====================================================
+	-- 99%
+	--====================================================
+
+	SetProgress(99)
+
+	LoadingStatus.Text = "Starting 1000x LUCK..."
+
+	task.wait(0.7)
+
+	--====================================================
+	-- 100%
+	--====================================================
+
+	SetProgress(100)
+
+	LoadingStatus.Text = "✓ Ready!"
+
+	task.wait(0.8)
+
+	--====================================================
+	-- FADE OUT
+	--====================================================
+
+	for _, Object in ipairs(Loading:GetDescendants()) do
+
+		if Object:IsA("TextLabel") then
+
+			TweenService:Create(
+				Object,
+				TweenInfo.new(0.6),
+				{
+					TextTransparency = 1
+				}
+			):Play()
+
+		elseif Object:IsA("Frame") then
+
+			TweenService:Create(
+				Object,
+				TweenInfo.new(0.6),
+				{
+					BackgroundTransparency = 1
+				}
+			):Play()
+
+		end
+
+	end
+
+	TweenService:Create(
+		Loading,
+		TweenInfo.new(0.7),
+		{
+			BackgroundTransparency = 1
+		}
+	):Play()
+
+	task.wait(0.8)
+
+	Loading:Destroy()
+
+end)
+
+--========================================================
+-- MAIN PANEL
+--========================================================
+
+local Main = Instance.new("Frame")
+Main.Name = "AutoRNGPanel"
+Main.AnchorPoint = Vector2.new(0.5, 0.5)
+Main.Position = UDim2.fromScale(0.5, 0.5)
+
+-- COMPACT SIZE
+Main.Size = UDim2.fromScale(0.27, 0.52)
+
+Main.BackgroundColor3 = COLORS.Panel
+Main.BorderSizePixel = 0
+Main.ClipsDescendants = true
+Main.Parent = ScreenGui
+
+--========================================================
+-- SIZE LIMIT
+--========================================================
+
+local SizeLimit = Instance.new("UISizeConstraint")
+SizeLimit.MinSize = Vector2.new(250, 330)
+SizeLimit.MaxSize = Vector2.new(360, 470)
+SizeLimit.Parent = Main
+
+--========================================================
+-- PANEL CORNER
+--========================================================
+
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 16)
+MainCorner.Parent = Main
+
+--========================================================
+-- PANEL STROKE
+--========================================================
+
+local MainStroke = Instance.new("UIStroke")
+MainStroke.Color = Color3.fromRGB(105, 78, 190)
+MainStroke.Transparency = 0.25
+MainStroke.Thickness = 1.2
+MainStroke.Parent = Main
+
+--========================================================
+-- TOP GLOW
+--========================================================
+
+local TopGlow = Instance.new("Frame")
+TopGlow.Position = UDim2.fromScale(0.06, 0.025)
+TopGlow.Size = UDim2.fromScale(0.88, 0.012)
+TopGlow.BackgroundColor3 = COLORS.Purple
+TopGlow.BorderSizePixel = 0
+TopGlow.Parent = Main
+
+local TopCorner = Instance.new("UICorner")
+TopCorner.CornerRadius = UDim.new(1, 0)
+TopCorner.Parent = TopGlow
+
+local TopGradient = Instance.new("UIGradient")
+TopGradient.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, COLORS.Purple),
+	ColorSequenceKeypoint.new(0.5, COLORS.Pink),
+	ColorSequenceKeypoint.new(1, COLORS.Blue)
+})
+TopGradient.Parent = TopGlow
+
+--========================================================
+-- HEADER ICON
+--========================================================
+
+local HeaderIcon = Instance.new("TextLabel")
+HeaderIcon.Position = UDim2.fromScale(0.065, 0.07)
+HeaderIcon.Size = UDim2.fromScale(0.12, 0.08)
+HeaderIcon.BackgroundTransparency = 1
+HeaderIcon.Font = Enum.Font.GothamBlack
+HeaderIcon.Text = "✦"
+HeaderIcon.TextScaled = true
+HeaderIcon.TextColor3 = COLORS.Purple
+HeaderIcon.Parent = Main
+
+--========================================================
+-- TITLE
+--========================================================
+
+local PanelTitle = Instance.new("TextLabel")
+PanelTitle.Position = UDim2.fromScale(0.18, 0.065)
+PanelTitle.Size = UDim2.fromScale(0.65, 0.07)
+PanelTitle.BackgroundTransparency = 1
+PanelTitle.Font = Enum.Font.GothamBold
+PanelTitle.Text = "AUTO RNG"
+PanelTitle.TextScaled = true
+PanelTitle.TextColor3 = COLORS.White
+PanelTitle.TextXAlignment = Enum.TextXAlignment.Left
+PanelTitle.Parent = Main
+
+local PanelSubtitle = Instance.new("TextLabel")
+PanelSubtitle.Position = UDim2.fromScale(0.18, 0.125)
+PanelSubtitle.Size = UDim2.fromScale(0.65, 0.045)
+PanelSubtitle.BackgroundTransparency = 1
+PanelSubtitle.Font = Enum.Font.Gotham
+PanelSubtitle.Text = "⚡ RNG AUTOMATION"
+PanelSubtitle.TextScaled = true
+PanelSubtitle.TextColor3 = COLORS.Gray
+PanelSubtitle.TextXAlignment = Enum.TextXAlignment.Left
+PanelSubtitle.Parent = Main
+
+--========================================================
+-- CLOSE BUTTON
+--========================================================
+
+local CloseButton = Instance.new("TextButton")
+CloseButton.AnchorPoint = Vector2.new(1, 0)
+CloseButton.Position = UDim2.fromScale(0.94, 0.06)
+CloseButton.Size = UDim2.fromScale(0.075, 0.07)
+CloseButton.BackgroundColor3 = Color3.fromRGB(30, 29, 42)
+CloseButton.BorderSizePixel = 0
+CloseButton.Text = "×"
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.TextScaled = true
+CloseButton.TextColor3 = COLORS.Gray
+CloseButton.AutoButtonColor = false
+CloseButton.Parent = Main
+
+local CloseCorner = Instance.new("UICorner")
+CloseCorner.CornerRadius = UDim.new(0, 7)
+CloseCorner.Parent = CloseButton
+
+CloseButton.MouseEnter:Connect(function()
+
+	TweenService:Create(
+		CloseButton,
+		TweenInfo.new(0.15),
+		{
+			BackgroundColor3 = Color3.fromRGB(70, 30, 40),
+			TextColor3 = COLORS.Red
+		}
+	):Play()
+
+end)
+
+CloseButton.MouseLeave:Connect(function()
+
+	TweenService:Create(
+		CloseButton,
+		TweenInfo.new(0.15),
+		{
+			BackgroundColor3 = Color3.fromRGB(30, 29, 42),
+			TextColor3 = COLORS.Gray
+		}
+	):Play()
+
+end)
+
+CloseButton.MouseButton1Click:Connect(function()
+
+	TweenService:Create(
+		Main,
+		TweenInfo.new(
+			0.25,
+			Enum.EasingStyle.Back,
+			Enum.EasingDirection.In
+		),
+		{
+			Size = UDim2.fromScale(0.20, 0.35)
+		}
+	):Play()
+
+	task.wait(0.25)
+
+	Main.Visible = false
+
+end)
+
+--========================================================
+-- DIVIDER
+--========================================================
+
+local Divider = Instance.new("Frame")
+Divider.Position = UDim2.fromScale(0.06, 0.185)
+Divider.Size = UDim2.fromScale(0.88, 0.003)
+Divider.BackgroundColor3 = Color3.fromRGB(42, 42, 58)
+Divider.BorderSizePixel = 0
+Divider.Parent = Main
+
+--========================================================
+-- TOGGLE CREATOR
+--========================================================
+
+local function CreateToggle(Text, Icon, Y, Callback)
+
+	local Holder = Instance.new("Frame")
+	Holder.BackgroundColor3 = COLORS.Card
+	Holder.Position = UDim2.fromScale(0.06, Y)
+	Holder.Size = UDim2.fromScale(0.88, 0.105)
+	Holder.BorderSizePixel = 0
+	Holder.Parent = Main
+
+	local HolderCorner = Instance.new("UICorner")
+	HolderCorner.CornerRadius = UDim.new(0, 10)
+	HolderCorner.Parent = Holder
+
+	local HolderStroke = Instance.new("UIStroke")
+	HolderStroke.Color = Color3.fromRGB(48, 47, 65)
+	HolderStroke.Transparency = 0.35
+	HolderStroke.Thickness = 1
+	HolderStroke.Parent = Holder
+
+	--====================================================
+	-- ICON
+	--====================================================
+
+	local IconLabel = Instance.new("TextLabel")
+	IconLabel.Position = UDim2.fromScale(0.05, 0.1)
+	IconLabel.Size = UDim2.fromScale(0.13, 0.8)
+	IconLabel.BackgroundTransparency = 1
+	IconLabel.Font = Enum.Font.GothamBold
+	IconLabel.Text = Icon
+	IconLabel.TextScaled = true
+	IconLabel.TextColor3 = COLORS.White
+	IconLabel.Parent = Holder
+
+	--====================================================
+	-- TEXT
+	--====================================================
+
+	local Label = Instance.new("TextLabel")
+	Label.Position = UDim2.fromScale(0.20, 0)
+	Label.Size = UDim2.fromScale(0.55, 1)
+	Label.BackgroundTransparency = 1
+	Label.Font = Enum.Font.GothamMedium
+	Label.Text = Text
+	Label.TextScaled = true
+	Label.TextColor3 = COLORS.Light
+	Label.TextXAlignment = Enum.TextXAlignment.Left
+	Label.Parent = Holder
+
+	--====================================================
+	-- TOGGLE
+	--====================================================
+
+	local Toggle = Instance.new("TextButton")
+	Toggle.AnchorPoint = Vector2.new(1, 0.5)
+	Toggle.Position = UDim2.fromScale(0.94, 0.5)
+	Toggle.Size = UDim2.fromScale(0.20, 0.38)
+	Toggle.BackgroundColor3 = Color3.fromRGB(52, 51, 66)
+	Toggle.BorderSizePixel = 0
+	Toggle.Text = ""
+	Toggle.AutoButtonColor = false
+	Toggle.Parent = Holder
+
+	local ToggleCorner = Instance.new("UICorner")
+	ToggleCorner.CornerRadius = UDim.new(1, 0)
+	ToggleCorner.Parent = Toggle
+
+	--====================================================
+	-- KNOB
+	--====================================================
+
+	local Knob = Instance.new("Frame")
+	Knob.AnchorPoint = Vector2.new(0, 0.5)
+	Knob.Position = UDim2.fromScale(0.08, 0.5)
+	Knob.Size = UDim2.fromScale(0.34, 0.70)
+	Knob.BackgroundColor3 = Color3.fromRGB(190, 190, 205)
+	Knob.BorderSizePixel = 0
+	Knob.Parent = Toggle
+
+	local KnobCorner = Instance.new("UICorner")
+	KnobCorner.CornerRadius = UDim.new(1, 0)
+	KnobCorner.Parent = Knob
+
+	local Enabled = false
+
+	local function Update(Value)
+
+		Enabled = Value
+
+		if Enabled then
+
+			TweenService:Create(
+				Toggle,
+				TweenInfo.new(0.2),
+				{
+					BackgroundColor3 = COLORS.Green
+				}
+			):Play()
+
+			TweenService:Create(
+				Knob,
+				TweenInfo.new(
+					0.22,
+					Enum.EasingStyle.Back,
+					Enum.EasingDirection.Out
+				),
+				{
+					Position = UDim2.fromScale(0.58, 0.5),
+					BackgroundColor3 = COLORS.White
+				}
+			):Play()
+
+			TweenService:Create(
+				HolderStroke,
+				TweenInfo.new(0.2),
+				{
+					Color = COLORS.Green,
+					Transparency = 0.5
+				}
+			):Play()
+
+		else
+
+			TweenService:Create(
+				Toggle,
+				TweenInfo.new(0.2),
+				{
+					BackgroundColor3 = Color3.fromRGB(52, 51, 66)
+				}
+			):Play()
+
+			TweenService:Create(
+				Knob,
+				TweenInfo.new(
+					0.22,
+					Enum.EasingStyle.Back,
+					Enum.EasingDirection.Out
+				),
+				{
+					Position = UDim2.fromScale(0.08, 0.5),
+					BackgroundColor3 = Color3.fromRGB(190, 190, 205)
+				}
+			):Play()
+
+			TweenService:Create(
+				HolderStroke,
+				TweenInfo.new(0.2),
+				{
+					Color = Color3.fromRGB(48, 47, 65),
+					Transparency = 0.35
+				}
+			):Play()
+
+		end
+
+		Callback(Enabled)
+
+	end
+
+	Toggle.MouseButton1Click:Connect(function()
+
+		Update(not Enabled)
+
+	end)
+
+	Update(false)
+
+	return Update
+
+end
+
+--========================================================
+-- AUTO SPIN
+--========================================================
+
+CreateToggle(
+	"Auto Spin",
+	"🧠",
+	0.215,
+	function(Value)
+
+		AutoSpin = Value
+
+	end
+)
+
+--========================================================
+-- MAX LUCK
+--========================================================
+
+CreateToggle(
+	"MAX LUCK",
+	"🍀",
+	0.335,
+	function(Value)
+
+		MaxLuck = Value
+
+	end
+)
+
+--========================================================
+-- AUTO BUY
+--========================================================
+
+local AutoBuyButton = Instance.new("TextButton")
+AutoBuyButton.Position = UDim2.fromScale(0.06, 0.455)
+AutoBuyButton.Size = UDim2.fromScale(0.88, 0.085)
+AutoBuyButton.BackgroundColor3 = COLORS.Card
+AutoBuyButton.BorderSizePixel = 0
+AutoBuyButton.Font = Enum.Font.GothamMedium
+AutoBuyButton.Text = "🛒  Auto Buy  •  OFF"
+AutoBuyButton.TextScaled = true
+AutoBuyButton.TextColor3 = COLORS.Light
+AutoBuyButton.AutoButtonColor = false
+AutoBuyButton.Parent = Main
+
+local BuyCorner = Instance.new("UICorner")
+BuyCorner.CornerRadius = UDim.new(0, 9)
+BuyCorner.Parent = AutoBuyButton
+
+local BuyStroke = Instance.new("UIStroke")
+BuyStroke.Color = Color3.fromRGB(48, 47, 65)
+BuyStroke.Transparency = 0.25
+BuyStroke.Parent = AutoBuyButton
+
+AutoBuyButton.MouseEnter:Connect(function()
+
+	TweenService:Create(
+		AutoBuyButton,
+		TweenInfo.new(0.15),
+		{
+			BackgroundColor3 = COLORS.CardHover
+		}
+	):Play()
+
+end)
+
+AutoBuyButton.MouseLeave:Connect(function()
+
+	if not AutoBuy then
+
+		TweenService:Create(
+			AutoBuyButton,
+			TweenInfo.new(0.15),
+			{
+				BackgroundColor3 = COLORS.Card
+			}
+		):Play()
+
+	end
+
+end)
+
+AutoBuyButton.MouseButton1Click:Connect(function()
+
+	AutoBuy = not AutoBuy
+
+	if AutoBuy then
+
+		AutoBuyButton.Text = "🛒  Auto Buy  •  ON"
+		AutoBuyButton.BackgroundColor3 = Color3.fromRGB(27, 67, 51)
+
+		BuyStroke.Color = COLORS.Green
+
+	else
+
+		AutoBuyButton.Text = "🛒  Auto Buy  •  OFF"
+		AutoBuyButton.BackgroundColor3 = COLORS.Card
+
+		BuyStroke.Color = Color3.fromRGB(48, 47, 65)
+
+	end
+
+end)
+
+--========================================================
+-- STATUS TITLE
+--========================================================
+
+local StatusTitle = Instance.new("TextLabel")
+StatusTitle.Position = UDim2.fromScale(0.06, 0.565)
+StatusTitle.Size = UDim2.fromScale(0.88, 0.04)
+StatusTitle.BackgroundTransparency = 1
+StatusTitle.Font = Enum.Font.GothamBold
+StatusTitle.Text = "⚡  STATUS"
+StatusTitle.TextScaled = true
+StatusTitle.TextColor3 = COLORS.Gray
+StatusTitle.TextXAlignment = Enum.TextXAlignment.Left
+StatusTitle.Parent = Main
+
+--========================================================
+-- STATUS CARD
+--========================================================
+
+local StatusCard = Instance.new("Frame")
+StatusCard.Position = UDim2.fromScale(0.06, 0.615)
+StatusCard.Size = UDim2.fromScale(0.88, 0.075)
+StatusCard.BackgroundColor3 = Color3.fromRGB(20, 20, 31)
+StatusCard.BorderSizePixel = 0
+StatusCard.Parent = Main
+
+local StatusCorner = Instance.new("UICorner")
+StatusCorner.CornerRadius = UDim.new(0, 8)
+StatusCorner.Parent = StatusCard
+
+local StatusDot = Instance.new("TextLabel")
+StatusDot.Position = UDim2.fromScale(0.04, 0)
+StatusDot.Size = UDim2.fromScale(0.12, 1)
+StatusDot.BackgroundTransparency = 1
+StatusDot.Font = Enum.Font.GothamBold
+StatusDot.Text = "●"
+StatusDot.TextScaled = true
+StatusDot.TextColor3 = Color3.fromRGB(100, 100, 115)
+StatusDot.Parent = StatusCard
+
+local Status = Instance.new("TextLabel")
+Status.Position = UDim2.fromScale(0.16, 0)
+Status.Size = UDim2.fromScale(0.78, 1)
+Status.BackgroundTransparency = 1
+Status.Font = Enum.Font.GothamBold
+Status.Text = "Idle"
+Status.TextScaled = true
+Status.TextColor3 = COLORS.Gray
+Status.TextXAlignment = Enum.TextXAlignment.Left
+Status.Parent = StatusCard
+
+--========================================================
+-- LAST WIN TITLE
+--========================================================
+
+local LastTitle = Instance.new("TextLabel")
+LastTitle.Position = UDim2.fromScale(0.06, 0.72)
+LastTitle.Size = UDim2.fromScale(0.88, 0.04)
+LastTitle.BackgroundTransparency = 1
+LastTitle.Font = Enum.Font.GothamBold
+LastTitle.Text = "🏆  LAST WIN"
+LastTitle.TextScaled = true
+LastTitle.TextColor3 = COLORS.Gray
+LastTitle.TextXAlignment = Enum.TextXAlignment.Left
+LastTitle.Parent = Main
+
+--========================================================
+-- LAST WIN CARD
+--========================================================
+
+local LastWinCard = Instance.new("Frame")
+LastWinCard.Position = UDim2.fromScale(0.06, 0.77)
+LastWinCard.Size = UDim2.fromScale(0.88, 0.075)
+LastWinCard.BackgroundColor3 = Color3.fromRGB(20, 20, 31)
+LastWinCard.BorderSizePixel = 0
+LastWinCard.Parent = Main
+
+local LastCorner = Instance.new("UICorner")
+LastCorner.CornerRadius = UDim.new(0, 8)
+LastCorner.Parent = LastWinCard
+
+local LastWin = Instance.new("TextLabel")
+LastWin.Position = UDim2.fromScale(0.05, 0)
+LastWin.Size = UDim2.fromScale(0.90, 1)
+LastWin.BackgroundTransparency = 1
+LastWin.Font = Enum.Font.GothamBold
+LastWin.Text = "—"
+LastWin.TextScaled = true
+LastWin.TextColor3 = COLORS.Light
+LastWin.TextXAlignment = Enum.TextXAlignment.Left
+LastWin.Parent = LastWinCard
+
+--========================================================
+-- DRAG SYSTEM
+--========================================================
+
+local Dragging = false
+local DragStart
+local StartPosition
+
+Main.InputBegan:Connect(function(Input)
+
+	if Input.UserInputType == Enum.UserInputType.MouseButton1
+		or Input.UserInputType == Enum.UserInputType.Touch then
+
+		Dragging = true
+		DragStart = Input.Position
+		StartPosition = Main.Position
+
+	end
+
+end)
+
+UserInputService.InputChanged:Connect(function(Input)
+
+	if not Dragging then
+		return
+	end
+
+	if Input.UserInputType == Enum.UserInputType.MouseMovement
+		or Input.UserInputType == Enum.UserInputType.Touch then
+
+		local Delta = Input.Position - DragStart
+
+		Main.Position = UDim2.new(
+			StartPosition.X.Scale,
+			StartPosition.X.Offset + Delta.X,
+			StartPosition.Y.Scale,
+			StartPosition.Y.Offset + Delta.Y
+		)
+
+	end
+
+end)
+
+UserInputService.InputEnded:Connect(function(Input)
+
+	if Input.UserInputType == Enum.UserInputType.MouseButton1
+		or Input.UserInputType == Enum.UserInputType.Touch then
+
+		Dragging = false
+
+	end
+
+end)
+
+--========================================================
+-- AUTO SPIN LOOP
+--========================================================
+
+task.spawn(function()
+
+	while ScreenGui.Parent do
+
+		if AutoSpin then
+
+			Status.Text = "Spinning..."
+			StatusDot.TextColor3 = COLORS.Yellow
+			Status.TextColor3 = COLORS.Yellow
+
+			--================================================
+			-- PUT YOUR ACTUAL RNG CODE HERE
+			--================================================
+			-- Example:
+			-- game.ReplicatedStorage.Remotes.Spin:FireServer()
+
+			task.wait(SPIN_DELAY)
+
+			LastWin.Text = "✨ Spin Complete"
+			LastWin.TextColor3 = COLORS.White
+
+			Status.Text = "Active"
+			StatusDot.TextColor3 = COLORS.Green
+			Status.TextColor3 = COLORS.Green
+
+		else
+
+			Status.Text = "Idle"
+			StatusDot.TextColor3 = Color3.fromRGB(100, 100, 115)
+			Status.TextColor3 = COLORS.Gray
+
+			task.wait(0.1)
+
+		end
+
+	end
+
+end)
