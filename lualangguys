@@ -1,7 +1,16 @@
---========================================================
--- 🧠 STEAL A BRAINROT — RNG MACHINE
--- REALISTIC LOADING + PREMIUM NEON UI
---========================================================
+--//========================================================
+--// 🧠 STEAL A BRAINROT
+--// LUCKER BLOCK × RNG LUCKER
+--// SOFIYA HUB
+--//
+--// LOADING SCREEN FIRST
+--// ~50 SECOND LOAD → 89%
+--// 89% → 99%
+--// 99% HOLD → 1 HOUR
+--// THEN SHOW BOTH UI PANELS
+--//
+--// LocalScript -> StarterGui
+--//========================================================
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
@@ -15,19 +24,11 @@ local PlayerGui = Player:WaitForChild("PlayerGui")
 -- SETTINGS
 --========================================================
 
-local STUCK_TIME = 300 -- 5 minutes
-local SPIN_DELAY = 0.5
-
-local AutoSpin = false
-local MaxLuck = false
-local AutoBuy = false
-
---========================================================
--- SCREEN GUI
---========================================================
+local HOLD_99_TIME = 3600 -- 1 hour
+local LOAD_TO_89_TIME = 50
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "BrainrotRNGMachine"
+ScreenGui.Name = "SofiyaHub_LuckerX_RNGLucker"
 ScreenGui.IgnoreGuiInset = true
 ScreenGui.ResetOnSpawn = false
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -49,9 +50,9 @@ local BGGradient = Instance.new("UIGradient")
 BGGradient.Rotation = 35
 BGGradient.Color = ColorSequence.new({
 	ColorSequenceKeypoint.new(0, Color3.fromRGB(2, 2, 7)),
-	ColorSequenceKeypoint.new(0.30, Color3.fromRGB(9, 4, 22)),
-	ColorSequenceKeypoint.new(0.55, Color3.fromRGB(14, 5, 29)),
-	ColorSequenceKeypoint.new(0.80, Color3.fromRGB(5, 8, 22)),
+	ColorSequenceKeypoint.new(0.3, Color3.fromRGB(9, 4, 22)),
+	ColorSequenceKeypoint.new(0.55, Color3.fromRGB(18, 5, 32)),
+	ColorSequenceKeypoint.new(0.8, Color3.fromRGB(5, 8, 22)),
 	ColorSequenceKeypoint.new(1, Color3.fromRGB(2, 2, 8))
 })
 BGGradient.Parent = Loading
@@ -63,22 +64,22 @@ BGGradient.Parent = Loading
 local Center = Instance.new("Frame")
 Center.AnchorPoint = Vector2.new(0.5, 0.5)
 Center.Position = UDim2.fromScale(0.5, 0.5)
-Center.Size = UDim2.fromScale(0.52, 0.65)
+Center.Size = UDim2.fromScale(0.55, 0.65)
 Center.BackgroundTransparency = 1
 Center.ZIndex = 501
 Center.Parent = Loading
 
 --========================================================
--- BRAND
+-- MAIN TITLE
 --========================================================
 
 local Brand = Instance.new("TextLabel")
 Brand.AnchorPoint = Vector2.new(0.5, 0)
-Brand.Position = UDim2.fromScale(0.5, 0.02)
-Brand.Size = UDim2.fromScale(0.9, 0.075)
+Brand.Position = UDim2.fromScale(0.5, 0.015)
+Brand.Size = UDim2.fromScale(0.92, 0.09)
 Brand.BackgroundTransparency = 1
 Brand.Font = Enum.Font.GothamBlack
-Brand.Text = "STEAL A BRAINROT"
+Brand.Text = "LUCKER BLOCK × RNG LUCKER"
 Brand.TextScaled = true
 Brand.TextColor3 = Color3.fromRGB(240, 235, 255)
 Brand.ZIndex = 505
@@ -96,17 +97,17 @@ BrandGradient.Parent = Brand
 -- SUBTITLE
 --========================================================
 
-local MachineTitle = Instance.new("TextLabel")
-MachineTitle.AnchorPoint = Vector2.new(0.5, 0)
-MachineTitle.Position = UDim2.fromScale(0.5, 0.095)
-MachineTitle.Size = UDim2.fromScale(0.75, 0.055)
-MachineTitle.BackgroundTransparency = 1
-MachineTitle.Font = Enum.Font.GothamBold
-MachineTitle.Text = "⚙  RNG MACHINE  ⚙"
-MachineTitle.TextScaled = true
-MachineTitle.TextColor3 = Color3.fromRGB(125, 125, 155)
-MachineTitle.ZIndex = 505
-MachineTitle.Parent = Center
+local Subtitle = Instance.new("TextLabel")
+Subtitle.AnchorPoint = Vector2.new(0.5, 0)
+Subtitle.Position = UDim2.fromScale(0.5, 0.105)
+Subtitle.Size = UDim2.fromScale(0.7, 0.055)
+Subtitle.BackgroundTransparency = 1
+Subtitle.Font = Enum.Font.GothamBold
+Subtitle.Text = "SOFIYA HUB"
+Subtitle.TextScaled = true
+Subtitle.TextColor3 = Color3.fromRGB(145, 120, 210)
+Subtitle.ZIndex = 505
+Subtitle.Parent = Center
 
 --========================================================
 -- MACHINE GLOW
@@ -114,8 +115,8 @@ MachineTitle.Parent = Center
 
 local MachineGlow = Instance.new("Frame")
 MachineGlow.AnchorPoint = Vector2.new(0.5, 0.5)
-MachineGlow.Position = UDim2.fromScale(0.5, 0.42)
-MachineGlow.Size = UDim2.fromScale(0.30, 0.30)
+MachineGlow.Position = UDim2.fromScale(0.5, 0.41)
+MachineGlow.Size = UDim2.fromScale(0.31, 0.31)
 MachineGlow.BackgroundColor3 = Color3.fromRGB(100, 50, 255)
 MachineGlow.BackgroundTransparency = 0.94
 MachineGlow.BorderSizePixel = 0
@@ -132,8 +133,8 @@ GlowCorner.Parent = MachineGlow
 
 local Machine = Instance.new("Frame")
 Machine.AnchorPoint = Vector2.new(0.5, 0.5)
-Machine.Position = UDim2.fromScale(0.5, 0.42)
-Machine.Size = UDim2.fromScale(0.22, 0.22)
+Machine.Position = UDim2.fromScale(0.5, 0.41)
+Machine.Size = UDim2.fromScale(0.23, 0.23)
 Machine.BackgroundColor3 = Color3.fromRGB(9, 7, 19)
 Machine.BorderSizePixel = 0
 Machine.ZIndex = 503
@@ -190,7 +191,7 @@ Brain.ZIndex = 506
 Brain.Parent = Core
 
 --========================================================
--- RING 1
+-- RINGS
 --========================================================
 
 local Ring1 = Instance.new("Frame")
@@ -210,10 +211,6 @@ Ring1Stroke.Thickness = 2
 Ring1Stroke.Color = Color3.fromRGB(110, 65, 255)
 Ring1Stroke.Transparency = 0.35
 Ring1Stroke.Parent = Ring1
-
---========================================================
--- RING 2
---========================================================
 
 local Ring2 = Instance.new("Frame")
 Ring2.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -239,24 +236,25 @@ Ring2Stroke.Parent = Ring2
 
 local OrbitDots = {}
 
-for i = 1, 8 do
+for i = 1, 10 do
 
 	local Dot = Instance.new("Frame")
 	Dot.AnchorPoint = Vector2.new(0.5, 0.5)
 	Dot.Size = UDim2.fromOffset(5, 5)
 
-	Dot.BackgroundColor3 =
-		i % 2 == 0
-		and Color3.fromRGB(70, 180, 255)
-		or Color3.fromRGB(175, 80, 255)
+	if i % 2 == 0 then
+		Dot.BackgroundColor3 = Color3.fromRGB(70, 180, 255)
+	else
+		Dot.BackgroundColor3 = Color3.fromRGB(175, 80, 255)
+	end
 
 	Dot.BorderSizePixel = 0
 	Dot.ZIndex = 507
 	Dot.Parent = Center
 
-	local DotCorner = Instance.new("UICorner")
-	DotCorner.CornerRadius = UDim.new(1, 0)
-	DotCorner.Parent = Dot
+	local Corner = Instance.new("UICorner")
+	Corner.CornerRadius = UDim.new(1, 0)
+	Corner.Parent = Dot
 
 	table.insert(OrbitDots, Dot)
 end
@@ -267,8 +265,8 @@ end
 
 local ProgressHolder = Instance.new("Frame")
 ProgressHolder.AnchorPoint = Vector2.new(0.5, 0)
-ProgressHolder.Position = UDim2.fromScale(0.5, 0.64)
-ProgressHolder.Size = UDim2.fromScale(0.68, 0.045)
+ProgressHolder.Position = UDim2.fromScale(0.5, 0.65)
+ProgressHolder.Size = UDim2.fromScale(0.7, 0.045)
 ProgressHolder.BackgroundColor3 = Color3.fromRGB(22, 20, 34)
 ProgressHolder.BorderSizePixel = 0
 ProgressHolder.ZIndex = 505
@@ -277,10 +275,6 @@ ProgressHolder.Parent = Center
 local ProgressHolderCorner = Instance.new("UICorner")
 ProgressHolderCorner.CornerRadius = UDim.new(1, 0)
 ProgressHolderCorner.Parent = ProgressHolder
-
---========================================================
--- PROGRESS
---========================================================
 
 local Progress = Instance.new("Frame")
 Progress.Size = UDim2.fromScale(0, 1)
@@ -307,10 +301,10 @@ ProgressGradient.Parent = Progress
 --========================================================
 
 local Energy = Instance.new("Frame")
-Energy.Size = UDim2.fromScale(0.06, 2)
+Energy.Size = UDim2.fromScale(0.055, 2)
 Energy.Position = UDim2.fromScale(-0.1, -0.5)
 Energy.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Energy.BackgroundTransparency = 0.65
+Energy.BackgroundTransparency = 0.6
 Energy.BorderSizePixel = 0
 Energy.Rotation = 12
 Energy.ZIndex = 507
@@ -322,7 +316,7 @@ Energy.Parent = Progress
 
 local Percent = Instance.new("TextLabel")
 Percent.AnchorPoint = Vector2.new(0.5, 0)
-Percent.Position = UDim2.fromScale(0.5, 0.715)
+Percent.Position = UDim2.fromScale(0.5, 0.72)
 Percent.Size = UDim2.fromScale(0.3, 0.065)
 Percent.BackgroundTransparency = 1
 Percent.Font = Enum.Font.GothamBlack
@@ -338,18 +332,18 @@ Percent.Parent = Center
 
 local Status = Instance.new("TextLabel")
 Status.AnchorPoint = Vector2.new(0.5, 0)
-Status.Position = UDim2.fromScale(0.5, 0.79)
+Status.Position = UDim2.fromScale(0.5, 0.795)
 Status.Size = UDim2.fromScale(0.9, 0.055)
 Status.BackgroundTransparency = 1
 Status.Font = Enum.Font.GothamMedium
-Status.Text = "Initializing RNG Machine..."
+Status.Text = "Initializing..."
 Status.TextScaled = true
 Status.TextColor3 = Color3.fromRGB(105, 105, 130)
 Status.ZIndex = 505
 Status.Parent = Center
 
 --========================================================
--- MACHINE ANIMATION
+-- ANIMATION
 --========================================================
 
 local AnimationTime = 0
@@ -365,11 +359,10 @@ AnimationConnection = RunService.RenderStepped:Connect(function(dt)
 
 	AnimationTime += dt
 
-	Ring1.Rotation = AnimationTime * 35
-	Ring2.Rotation = -AnimationTime * 55
+	Ring1.Rotation = AnimationTime * 40
+	Ring2.Rotation = -AnimationTime * 60
 
-	local Pulse =
-		(math.sin(AnimationTime * 2.5) + 1) / 2
+	local Pulse = (math.sin(AnimationTime * 2.5) + 1) / 2
 
 	Core.Size = UDim2.fromScale(
 		0.50 + Pulse * 0.035,
@@ -389,28 +382,23 @@ AnimationConnection = RunService.RenderStepped:Connect(function(dt)
 		0.61 + Pulse * 0.045
 	)
 
-	-- orbit
 	for i, Dot in ipairs(OrbitDots) do
 
 		local Angle =
 			AnimationTime * 0.8
 			+ (math.pi * 2 / #OrbitDots) * i
 
-		local Radius = 0.17
+		local Radius = 0.18
 
 		Dot.Position = UDim2.fromScale(
 			0.5 + math.cos(Angle) * Radius,
-			0.42 + math.sin(Angle) * Radius
+			0.41 + math.sin(Angle) * Radius
 		)
 
-		local DotPulse =
-			(math.sin(AnimationTime * 3 + i) + 1) / 2
-
 		Dot.BackgroundTransparency =
-			0.15 + DotPulse * 0.5
+			0.15 + ((math.sin(AnimationTime * 3 + i) + 1) / 2) * 0.5
 	end
 
-	-- shimmer
 	local ShineX =
 		((AnimationTime * 0.65) % 1.3) - 0.15
 
@@ -419,14 +407,12 @@ AnimationConnection = RunService.RenderStepped:Connect(function(dt)
 end)
 
 --========================================================
--- REALISTIC PROGRESS
+-- PROGRESS FUNCTION
 --========================================================
 
 local CurrentProgress = 0
 
-local function SmoothProgress(Target, Duration)
-
-	Target = math.clamp(Target, 0, 100)
+local function SetProgress(Target, Duration)
 
 	local Start = CurrentProgress
 	local Elapsed = 0
@@ -440,8 +426,11 @@ local function SmoothProgress(Target, Duration)
 		local dt = RunService.RenderStepped:Wait()
 		Elapsed += dt
 
-		local Alpha =
-			math.clamp(Elapsed / Duration, 0, 1)
+		local Alpha = math.clamp(
+			Elapsed / Duration,
+			0,
+			1
+		)
 
 		local Smooth =
 			1 - (1 - Alpha)^3
@@ -457,6 +446,7 @@ local function SmoothProgress(Target, Duration)
 
 		Percent.Text =
 			math.floor(CurrentProgress + 0.5) .. "%"
+
 	end
 
 	CurrentProgress = Target
@@ -468,219 +458,165 @@ local function SmoothProgress(Target, Duration)
 end
 
 --========================================================
--- REALISTIC LOADING SEQUENCE
+-- MAIN LOADING SEQUENCE
 --========================================================
 
 task.spawn(function()
 
-	--====================================================
-	-- STAGE 1 — INITIAL BOOT
-	--====================================================
+	-- 0 → 20
+	Status.Text = "Initializing Lucker Block..."
 
-	Status.Text = "Starting RNG Machine..."
-	SmoothProgress(4, 1.4)
+	SetProgress(8, 2.5)
 
-	Status.Text = "Loading core interface..."
-	SmoothProgress(9, 1.1)
+	Status.Text = "Loading Lucker Block systems..."
 
-	Status.Text = "Checking machine configuration..."
-	SmoothProgress(15, 1.6)
+	SetProgress(15, 3.5)
 
-	--====================================================
-	-- STAGE 2 — SYSTEM LOAD
-	--====================================================
+	Status.Text = "Preparing RNG Lucker..."
 
-	Status.Text = "Loading Brainrot modules..."
+	SetProgress(20, 3.5)
 
-	for i = 16, 25 do
+	-- 20 → 40
+	Status.Text = "Synchronizing RNG modules..."
 
-		SmoothProgress(
-			i,
-			math.random(35, 75) / 100
-		)
+	SetProgress(28, 4)
 
-		if math.random() < 0.25 then
-			task.wait(math.random(15, 35) / 100)
-		end
-	end
+	Status.Text = "Loading luck configuration..."
 
-	Status.Text = "Synchronizing RNG data..."
+	SetProgress(35, 4)
 
-	for i = 26, 39 do
+	Status.Text = "Connecting interface modules..."
 
-		SmoothProgress(
-			i,
-			math.random(40, 90) / 100
-		)
+	SetProgress(40, 3.5)
 
-		if math.random() < 0.20 then
-			task.wait(math.random(15, 30) / 100)
-		end
-	end
+	-- 40 → 60
+	Status.Text = "Calibrating Lucker Block..."
 
-	--====================================================
-	-- STAGE 3 — CALIBRATION
-	--====================================================
+	SetProgress(48, 4)
 
-	Status.Text = "Calibrating RNG machine..."
+	Status.Text = "Calibrating RNG Lucker..."
 
-	for i = 40, 55 do
+	SetProgress(55, 4)
 
-		SmoothProgress(
-			i,
-			math.random(55, 105) / 100
-		)
+	Status.Text = "Optimizing system..."
 
-		if math.random() < 0.30 then
-			task.wait(math.random(20, 45) / 100)
-		end
-	end
+	SetProgress(60, 3.5)
 
-	Status.Text = "Verifying machine systems..."
+	-- 60 → 75
+	Status.Text = "Generating luck sequence..."
 
-	for i = 56, 68 do
+	SetProgress(67, 3.5)
 
-		SmoothProgress(
-			i,
-			math.random(60, 115) / 100
-		)
+	Status.Text = "Checking RNG configuration..."
 
-		if math.random() < 0.35 then
-			task.wait(math.random(20, 50) / 100)
-		end
-	end
+	SetProgress(73, 3.5)
 
-	--====================================================
-	-- STAGE 4 — SLOWER
-	--====================================================
+	Status.Text = "Preparing final modules..."
 
-	Status.Text = "Charging RNG reactor..."
+	SetProgress(75, 3)
 
-	for i = 69, 78 do
+	-- 75 → 84
+	Status.Text = "Loading final components..."
 
-		SmoothProgress(
-			i,
-			math.random(75, 135) / 100
-		)
+	SetProgress(80, 3)
 
-		if math.random() < 0.40 then
-			task.wait(math.random(25, 55) / 100)
-		end
-	end
+	Status.Text = "Verifying Lucker Block..."
 
-	Status.Text = "Optimizing Brainrot systems..."
+	SetProgress(84, 3)
 
-	for i = 79, 84 do
+	-- 84 → 89
+	Status.Text = "Finalizing RNG Lucker..."
 
-		SmoothProgress(
-			i,
-			math.random(100, 170) / 100
-		)
+	SetProgress(87, 2)
 
-		if math.random() < 0.45 then
-			task.wait(math.random(30, 65) / 100)
-		end
-	end
+	Status.Text = "Finalizing systems..."
 
-	--====================================================
-	-- FINAL PREPARATION
-	--====================================================
-
-	Status.Text = "Preparing final machine sequence..."
-
-	SmoothProgress(85, 1.8)
-	SmoothProgress(86, 1.5)
-
-	task.wait(0.7)
-
-	SmoothProgress(87, 2.0)
-
-	Status.Text = "Verifying Brainrot configuration..."
-
-	task.wait(1.0)
-
-	SmoothProgress(88, 2.2)
-
-	Status.Text = "Finalizing Brainrot systems"
-
-	task.wait(1.3)
-
-	SmoothProgress(89, 2.5)
+	SetProgress(89, 2.5)
 
 	--====================================================
 	-- 89% HOLD
 	--====================================================
 
-	local Finalizing = true
-	local DotCount = 0
-	local LastDotUpdate = 0
+	local Dots = 0
 
-	local HoldConnection
+	for i = 1, 50 do
 
-	HoldConnection = RunService.RenderStepped:Connect(function(dt)
+		Status.Text =
+			"Finalizing systems"
+			.. string.rep(".", Dots)
 
-		if not Finalizing then
-			return
+		Dots += 1
+
+		if Dots > 3 then
+			Dots = 0
 		end
 
-		LastDotUpdate += dt
-
-		if LastDotUpdate >= 0.5 then
-
-			LastDotUpdate = 0
-
-			DotCount += 1
-
-			if DotCount > 3 then
-				DotCount = 0
-			end
-
-			Status.Text =
-				"Finalizing Brainrot systems"
-				.. string.rep(".", DotCount)
-		end
-	end)
-
-	-- Five minute silent hold.
-	-- No countdown displayed.
-	task.wait(STUCK_TIME)
-
-	Finalizing = false
-
-	if HoldConnection then
-		HoldConnection:Disconnect()
+		task.wait(1)
 	end
 
 	--====================================================
-	-- FINALIZATION
+	-- 89 → 99
 	--====================================================
 
-	Status.Text = "Applying final configuration..."
+	Status.Text = "Final verification..."
 
-	SmoothProgress(92, 2.0)
+	SetProgress(92, 2)
 
-	task.wait(0.5)
+	Status.Text = "Activating Lucker Block..."
 
-	Status.Text = "Activating Brainrot systems..."
+	SetProgress(95, 2)
 
-	SmoothProgress(95, 2.2)
+	Status.Text = "Activating RNG Lucker..."
 
-	task.wait(0.5)
+	SetProgress(98, 2)
 
-	Status.Text = "Starting RNG Machine..."
+	Status.Text = "Almost ready..."
 
-	SmoothProgress(98, 1.8)
-
-	task.wait(0.5)
-
-	Status.Text = "🧠 RNG Machine Ready"
-
-	SmoothProgress(100, 1.5)
-
-	task.wait(0.8)
+	SetProgress(99, 1.5)
 
 	--====================================================
-	-- FADE OUT
+	-- 99% HOLD — 1 HOUR
+	--====================================================
+
+	local HoldStart = os.clock()
+	local HoldDots = 0
+	local LastUpdate = 0
+
+	while os.clock() - HoldStart < HOLD_99_TIME do
+
+		local Now = os.clock()
+
+		if Now - LastUpdate >= 0.5 then
+
+			LastUpdate = Now
+
+			Status.Text =
+				"Finalizing"
+				.. string.rep(".", HoldDots)
+
+			HoldDots += 1
+
+			if HoldDots > 3 then
+				HoldDots = 0
+			end
+
+		end
+
+		task.wait(0.1)
+	end
+
+	--====================================================
+	-- COMPLETE
+	--====================================================
+
+	Status.Text = "Lucker Block × RNG Lucker Ready!"
+
+	SetProgress(100, 2)
+
+	task.wait(1)
+
+	--====================================================
+	-- FADE LOADING SCREEN
 	--====================================================
 
 	for _, Object in ipairs(Loading:GetDescendants()) do
@@ -689,11 +625,7 @@ task.spawn(function()
 
 			TweenService:Create(
 				Object,
-				TweenInfo.new(
-					0.8,
-					Enum.EasingStyle.Sine,
-					Enum.EasingDirection.Out
-				),
+				TweenInfo.new(0.8),
 				{
 					TextTransparency = 1
 				}
@@ -703,11 +635,7 @@ task.spawn(function()
 
 			TweenService:Create(
 				Object,
-				TweenInfo.new(
-					0.8,
-					Enum.EasingStyle.Sine,
-					Enum.EasingDirection.Out
-				),
+				TweenInfo.new(0.8),
 				{
 					BackgroundTransparency = 1
 				}
@@ -727,7 +655,7 @@ task.spawn(function()
 
 	TweenService:Create(
 		Loading,
-		TweenInfo.new(0.9),
+		TweenInfo.new(1),
 		{
 			BackgroundTransparency = 1
 		}
@@ -739,349 +667,291 @@ task.spawn(function()
 end)
 
 --========================================================
--- 🧠 MAIN PANEL
+-- MAIN UI CONTAINER
 --========================================================
 
-local Main = Instance.new("Frame")
-Main.Name = "RNGMachinePanel"
-Main.AnchorPoint = Vector2.new(0.5, 0.5)
-Main.Position = UDim2.fromScale(0.5, 0.5)
-Main.Size = UDim2.fromScale(0.30, 0.58)
-Main.BackgroundColor3 = Color3.fromRGB(10, 9, 16)
-Main.BorderSizePixel = 0
-Main.ZIndex = 10
-Main.Parent = ScreenGui
+local Hub = Instance.new("Frame")
+Hub.Name = "MainHub"
+Hub.AnchorPoint = Vector2.new(0.5, 0.5)
+Hub.Position = UDim2.fromScale(0.5, 0.5)
+Hub.Size = UDim2.fromScale(0.55, 0.65)
+Hub.BackgroundTransparency = 1
+Hub.Visible = false
+Hub.ZIndex = 20
+Hub.Parent = ScreenGui
 
-local SizeLimit = Instance.new("UISizeConstraint")
-SizeLimit.MinSize = Vector2.new(270, 340)
-SizeLimit.MaxSize = Vector2.new(410, 530)
-SizeLimit.Parent = Main
-
-local MainCorner = Instance.new("UICorner")
-MainCorner.CornerRadius = UDim.new(0, 16)
-MainCorner.Parent = Main
-
-local MainStroke = Instance.new("UIStroke")
-MainStroke.Color = Color3.fromRGB(105, 70, 180)
-MainStroke.Transparency = 0.2
-MainStroke.Thickness = 1.5
-MainStroke.Parent = Main
+local HubSize = Instance.new("UISizeConstraint")
+HubSize.MinSize = Vector2.new(310, 300)
+HubSize.MaxSize = Vector2.new(650, 430)
+HubSize.Parent = Hub
 
 --========================================================
--- ACCENT
+-- LUCKER BLOCK PANEL
 --========================================================
 
-local Accent = Instance.new("Frame")
-Accent.Position = UDim2.fromScale(0.05, 0.025)
-Accent.Size = UDim2.fromScale(0.9, 0.008)
-Accent.BackgroundColor3 = Color3.fromRGB(115, 70, 255)
-Accent.BorderSizePixel = 0
-Accent.Parent = Main
+local Lucker = Instance.new("Frame")
+Lucker.Name = "LuckerBlock"
+Lucker.Size = UDim2.fromScale(0.47, 0.92)
+Lucker.Position = UDim2.fromScale(0, 0.04)
+Lucker.BackgroundColor3 = Color3.fromRGB(15, 6, 27)
+Lucker.BorderSizePixel = 0
+Lucker.Active = true
+Lucker.Parent = Hub
 
-local AccentGradient = Instance.new("UIGradient")
-AccentGradient.Color = ColorSequence.new({
-	ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 60, 255)),
-	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(200, 70, 255)),
-	ColorSequenceKeypoint.new(1, Color3.fromRGB(60, 170, 255))
+local LuckerCorner = Instance.new("UICorner")
+LuckerCorner.CornerRadius = UDim.new(0, 14)
+LuckerCorner.Parent = Lucker
+
+local LuckerStroke = Instance.new("UIStroke")
+LuckerStroke.Color = Color3.fromRGB(190, 60, 255)
+LuckerStroke.Thickness = 1.5
+LuckerStroke.Parent = Lucker
+
+local LuckerGradient = Instance.new("UIGradient")
+LuckerGradient.Rotation = 35
+LuckerGradient.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(42, 9, 65)),
+	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(14, 5, 25)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(38, 7, 58))
 })
-AccentGradient.Parent = Accent
-
-local AccentCorner = Instance.new("UICorner")
-AccentCorner.CornerRadius = UDim.new(1, 0)
-AccentCorner.Parent = Accent
+LuckerGradient.Parent = Lucker
 
 --========================================================
--- TITLE
+-- LUCKER TITLE
 --========================================================
 
-local PanelTitle = Instance.new("TextLabel")
-PanelTitle.Position = UDim2.fromScale(0.06, 0.065)
-PanelTitle.Size = UDim2.fromScale(0.88, 0.07)
-PanelTitle.BackgroundTransparency = 1
-PanelTitle.Font = Enum.Font.GothamBlack
-PanelTitle.Text = "🧠  RNG MACHINE"
-PanelTitle.TextScaled = true
-PanelTitle.TextColor3 = Color3.fromRGB(245, 245, 255)
-PanelTitle.TextXAlignment = Enum.TextXAlignment.Left
-PanelTitle.Parent = Main
+local LuckerTitle = Instance.new("TextLabel")
+LuckerTitle.Size = UDim2.fromScale(0.84, 0.13)
+LuckerTitle.Position = UDim2.fromScale(0.08, 0.07)
+LuckerTitle.BackgroundTransparency = 1
+LuckerTitle.Text = "LUCKER BLOCK"
+LuckerTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+LuckerTitle.TextScaled = true
+LuckerTitle.Font = Enum.Font.GothamBlack
+LuckerTitle.Parent = Lucker
 
-local PanelSubtitle = Instance.new("TextLabel")
-PanelSubtitle.Position = UDim2.fromScale(0.06, 0.135)
-PanelSubtitle.Size = UDim2.fromScale(0.88, 0.045)
-PanelSubtitle.BackgroundTransparency = 1
-PanelSubtitle.Font = Enum.Font.Gotham
-PanelSubtitle.Text = "STEAL A BRAINROT"
-PanelSubtitle.TextScaled = true
-PanelSubtitle.TextColor3 = Color3.fromRGB(125, 125, 145)
-PanelSubtitle.TextXAlignment = Enum.TextXAlignment.Left
-PanelSubtitle.Parent = Main
+local LuckerSub = Instance.new("TextLabel")
+LuckerSub.Size = UDim2.fromScale(0.75, 0.08)
+LuckerSub.Position = UDim2.fromScale(0.125, 0.19)
+LuckerSub.BackgroundTransparency = 1
+LuckerSub.Text = "30X LUCK"
+LuckerSub.TextColor3 = Color3.fromRGB(220, 100, 255)
+LuckerSub.TextScaled = true
+LuckerSub.Font = Enum.Font.GothamBold
+LuckerSub.Parent = Lucker
 
 --========================================================
--- DIVIDER
+-- 30X
 --========================================================
 
-local Divider = Instance.new("Frame")
-Divider.Position = UDim2.fromScale(0.06, 0.195)
-Divider.Size = UDim2.fromScale(0.88, 0.003)
-Divider.BackgroundColor3 = Color3.fromRGB(42, 42, 55)
-Divider.BorderSizePixel = 0
-Divider.Parent = Main
+local Luck30 = Instance.new("TextLabel")
+Luck30.Size = UDim2.fromScale(0.8, 0.22)
+Luck30.Position = UDim2.fromScale(0.1, 0.31)
+Luck30.BackgroundTransparency = 1
+Luck30.Text = "30X"
+Luck30.TextColor3 = Color3.fromRGB(255, 215, 75)
+Luck30.TextScaled = true
+Luck30.Font = Enum.Font.GothamBlack
+Luck30.Parent = Lucker
+
+local LuckBoost = Instance.new("TextLabel")
+LuckBoost.Size = UDim2.fromScale(0.8, 0.09)
+LuckBoost.Position = UDim2.fromScale(0.1, 0.52)
+LuckBoost.BackgroundTransparency = 1
+LuckBoost.Text = "LUCK BOOST"
+LuckBoost.TextColor3 = Color3.fromRGB(200, 160, 225)
+LuckBoost.TextScaled = true
+LuckBoost.Font = Enum.Font.GothamBold
+LuckBoost.Parent = Lucker
+
+local Sofiya = Instance.new("TextLabel")
+Sofiya.Size = UDim2.fromScale(0.8, 0.09)
+Sofiya.Position = UDim2.fromScale(0.1, 0.61)
+Sofiya.BackgroundTransparency = 1
+Sofiya.Text = "SOFIYA HUB"
+Sofiya.TextColor3 = Color3.fromRGB(240, 90, 255)
+Sofiya.TextScaled = true
+Sofiya.Font = Enum.Font.GothamBlack
+Sofiya.Parent = Lucker
 
 --========================================================
--- TOGGLE CREATOR
+-- LUCKER TOGGLE
 --========================================================
 
-local function CreateToggle(Text, Icon, Y, Callback)
+local LuckerToggle = Instance.new("TextButton")
+LuckerToggle.Size = UDim2.fromScale(0.68, 0.12)
+LuckerToggle.Position = UDim2.fromScale(0.16, 0.76)
+LuckerToggle.BackgroundColor3 = Color3.fromRGB(52, 43, 62)
+LuckerToggle.Text = "OFF"
+LuckerToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+LuckerToggle.TextScaled = true
+LuckerToggle.Font = Enum.Font.GothamBlack
+LuckerToggle.AutoButtonColor = false
+LuckerToggle.Parent = Lucker
 
-	local Holder = Instance.new("Frame")
-	Holder.BackgroundTransparency = 1
-	Holder.Position = UDim2.fromScale(0.06, Y)
-	Holder.Size = UDim2.fromScale(0.88, 0.10)
-	Holder.Parent = Main
+local LTCorner = Instance.new("UICorner")
+LTCorner.CornerRadius = UDim.new(1, 0)
+LTCorner.Parent = LuckerToggle
 
-	local Label = Instance.new("TextLabel")
-	Label.BackgroundTransparency = 1
-	Label.Size = UDim2.fromScale(0.70, 1)
-	Label.Font = Enum.Font.GothamMedium
-	Label.Text = Icon .. "  " .. Text
-	Label.TextScaled = true
-	Label.TextColor3 = Color3.fromRGB(225, 225, 235)
-	Label.TextXAlignment = Enum.TextXAlignment.Left
-	Label.Parent = Holder
+local LuckerEnabled = false
 
-	local Toggle = Instance.new("TextButton")
-	Toggle.Name = "Toggle"
-	Toggle.AnchorPoint = Vector2.new(1, 0.5)
-	Toggle.Position = UDim2.fromScale(1, 0.5)
-	Toggle.Size = UDim2.fromScale(0.16, 0.43)
-	Toggle.BackgroundColor3 = Color3.fromRGB(48, 48, 60)
-	Toggle.BorderSizePixel = 0
-	Toggle.Text = ""
-	Toggle.AutoButtonColor = false
-	Toggle.Parent = Holder
+LuckerToggle.MouseButton1Click:Connect(function()
 
-	local ToggleCorner = Instance.new("UICorner")
-	ToggleCorner.CornerRadius = UDim.new(1, 0)
-	ToggleCorner.Parent = Toggle
+	LuckerEnabled = not LuckerEnabled
 
-	local Knob = Instance.new("Frame")
-	Knob.AnchorPoint = Vector2.new(0, 0.5)
-	Knob.Position = UDim2.fromScale(0.07, 0.5)
-	Knob.Size = UDim2.fromScale(0.30, 0.72)
-	Knob.BackgroundColor3 = Color3.fromRGB(190, 190, 200)
-	Knob.BorderSizePixel = 0
-	Knob.Parent = Toggle
+	if LuckerEnabled then
 
-	local KnobCorner = Instance.new("UICorner")
-	KnobCorner.CornerRadius = UDim.new(1, 0)
-	KnobCorner.Parent = Knob
-
-	local Enabled = false
-
-	local function Update(Value)
-
-		Enabled = Value
-
-		if Enabled then
-
-			TweenService:Create(
-				Toggle,
-				TweenInfo.new(0.18),
-				{
-					BackgroundColor3 = Color3.fromRGB(45, 210, 130)
-				}
-			):Play()
-
-			TweenService:Create(
-				Knob,
-				TweenInfo.new(
-					0.18,
-					Enum.EasingStyle.Back,
-					Enum.EasingDirection.Out
-				),
-				{
-					Position = UDim2.fromScale(0.63, 0.5),
-					BackgroundColor3 = Color3.fromRGB(245, 255, 250)
-				}
-			):Play()
-
-		else
-
-			TweenService:Create(
-				Toggle,
-				TweenInfo.new(0.18),
-				{
-					BackgroundColor3 = Color3.fromRGB(48, 48, 60)
-				}
-			):Play()
-
-			TweenService:Create(
-				Knob,
-				TweenInfo.new(
-					0.18,
-					Enum.EasingStyle.Back,
-					Enum.EasingDirection.Out
-				),
-				{
-					Position = UDim2.fromScale(0.07, 0.5),
-					BackgroundColor3 = Color3.fromRGB(190, 190, 200)
-				}
-			):Play()
-		end
-
-		Callback(Enabled)
-	end
-
-	Toggle.MouseButton1Click:Connect(function()
-		Update(not Enabled)
-	end)
-
-	Update(false)
-end
-
---========================================================
--- TOGGLES
---========================================================
-
-CreateToggle(
-	"Auto Spin",
-	"🧠",
-	0.22,
-	function(Value)
-		AutoSpin = Value
-	end
-)
-
-CreateToggle(
-	"MAX LUCK",
-	"✨",
-	0.325,
-	function(Value)
-		MaxLuck = Value
-	end
-)
-
---========================================================
--- AUTO BUY
---========================================================
-
-local AutoBuyButton = Instance.new("TextButton")
-AutoBuyButton.Position = UDim2.fromScale(0.06, 0.445)
-AutoBuyButton.Size = UDim2.fromScale(0.88, 0.085)
-AutoBuyButton.BackgroundColor3 = Color3.fromRGB(30, 29, 42)
-AutoBuyButton.BorderSizePixel = 0
-AutoBuyButton.Font = Enum.Font.GothamMedium
-AutoBuyButton.Text = "🛒  Auto Buy Settings  •  OFF"
-AutoBuyButton.TextScaled = true
-AutoBuyButton.TextColor3 = Color3.fromRGB(215, 215, 225)
-AutoBuyButton.AutoButtonColor = false
-AutoBuyButton.Parent = Main
-
-local BuyCorner = Instance.new("UICorner")
-BuyCorner.CornerRadius = UDim.new(0, 8)
-BuyCorner.Parent = AutoBuyButton
-
-AutoBuyButton.MouseButton1Click:Connect(function()
-
-	AutoBuy = not AutoBuy
-
-	if AutoBuy then
-
-		AutoBuyButton.Text =
-			"🛒  Auto Buy Settings  •  ON"
-
-		AutoBuyButton.BackgroundColor3 =
-			Color3.fromRGB(42, 82, 62)
+		LuckerToggle.Text = "ON"
+		LuckerToggle.BackgroundColor3 =
+			Color3.fromRGB(40, 200, 75)
 
 	else
 
-		AutoBuyButton.Text =
-			"🛒  Auto Buy Settings  •  OFF"
-
-		AutoBuyButton.BackgroundColor3 =
-			Color3.fromRGB(30, 29, 42)
+		LuckerToggle.Text = "OFF"
+		LuckerToggle.BackgroundColor3 =
+			Color3.fromRGB(52, 43, 62)
 	end
 end)
 
 --========================================================
--- STATUS
+-- RNG LUCKER PANEL
 --========================================================
 
-local StatusTitle = Instance.new("TextLabel")
-StatusTitle.Position = UDim2.fromScale(0.06, 0.56)
-StatusTitle.Size = UDim2.fromScale(0.88, 0.045)
-StatusTitle.BackgroundTransparency = 1
-StatusTitle.Font = Enum.Font.GothamMedium
-StatusTitle.Text = "STATUS"
-StatusTitle.TextScaled = true
-StatusTitle.TextColor3 = Color3.fromRGB(110, 110, 130)
-StatusTitle.TextXAlignment = Enum.TextXAlignment.Left
-StatusTitle.Parent = Main
+local RNG = Instance.new("Frame")
+RNG.Name = "RNGLucker"
+RNG.Size = UDim2.fromScale(0.47, 0.92)
+RNG.Position = UDim2.fromScale(0.53, 0.04)
+RNG.BackgroundColor3 = Color3.fromRGB(10, 9, 16)
+RNG.BorderSizePixel = 0
+RNG.Active = true
+RNG.Parent = Hub
 
-local StatusPanel = Instance.new("TextLabel")
-StatusPanel.Position = UDim2.fromScale(0.06, 0.61)
-StatusPanel.Size = UDim2.fromScale(0.88, 0.065)
-StatusPanel.BackgroundTransparency = 1
-StatusPanel.Font = Enum.Font.GothamBold
-StatusPanel.Text = "●  Idle"
-StatusPanel.TextScaled = true
-StatusPanel.TextColor3 = Color3.fromRGB(170, 170, 185)
-StatusPanel.TextXAlignment = Enum.TextXAlignment.Left
-StatusPanel.Parent = Main
+local RNGCorner = Instance.new("UICorner")
+RNGCorner.CornerRadius = UDim.new(0, 14)
+RNGCorner.Parent = RNG
+
+local RNGStroke = Instance.new("UIStroke")
+RNGStroke.Color = Color3.fromRGB(105, 70, 180)
+RNGStroke.Thickness = 1.5
+RNGStroke.Parent = RNG
 
 --========================================================
--- DIVIDER 2
+-- RNG TITLE
 --========================================================
 
-local Divider2 = Instance.new("Frame")
-Divider2.Position = UDim2.fromScale(0.06, 0.70)
-Divider2.Size = UDim2.fromScale(0.88, 0.003)
-Divider2.BackgroundColor3 = Color3.fromRGB(42, 42, 55)
-Divider2.BorderSizePixel = 0
-Divider2.Parent = Main
+local RNGTitle = Instance.new("TextLabel")
+RNGTitle.Size = UDim2.fromScale(0.88, 0.12)
+RNGTitle.Position = UDim2.fromScale(0.06, 0.07)
+RNGTitle.BackgroundTransparency = 1
+RNGTitle.Text = "🧠 RNG LUCKER"
+RNGTitle.TextColor3 = Color3.fromRGB(245, 245, 255)
+RNGTitle.TextScaled = true
+RNGTitle.Font = Enum.Font.GothamBlack
+RNGTitle.Parent = RNG
+
+local RNGSub = Instance.new("TextLabel")
+RNGSub.Size = UDim2.fromScale(0.88, 0.07)
+RNGSub.Position = UDim2.fromScale(0.06, 0.18)
+RNGSub.BackgroundTransparency = 1
+RNGSub.Text = "SOFIYA HUB"
+RNGSub.TextColor3 = Color3.fromRGB(135, 115, 200)
+RNGSub.TextScaled = true
+RNGSub.Font = Enum.Font.GothamBold
+RNGSub.TextXAlignment = Enum.TextXAlignment.Left
+RNGSub.Parent = RNG
 
 --========================================================
--- LAST WIN
+-- RNG TOGGLE FUNCTION
 --========================================================
 
-local LastTitle = Instance.new("TextLabel")
-LastTitle.Position = UDim2.fromScale(0.06, 0.735)
-LastTitle.Size = UDim2.fromScale(0.88, 0.04)
-LastTitle.BackgroundTransparency = 1
-LastTitle.Font = Enum.Font.GothamMedium
-LastTitle.Text = "LAST WIN"
-LastTitle.TextScaled = true
-LastTitle.TextColor3 = Color3.fromRGB(100, 100, 115)
-LastTitle.TextXAlignment = Enum.TextXAlignment.Left
-LastTitle.Parent = Main
+local function MakeToggle(parent, text, y)
+
+	local Button = Instance.new("TextButton")
+	Button.Size = UDim2.fromScale(0.88, 0.105)
+	Button.Position = UDim2.fromScale(0.06, y)
+	Button.BackgroundColor3 = Color3.fromRGB(30, 29, 42)
+	Button.BorderSizePixel = 0
+	Button.Text = text .. "  •  OFF"
+	Button.TextColor3 = Color3.fromRGB(220, 220, 230)
+	Button.TextScaled = true
+	Button.Font = Enum.Font.GothamMedium
+	Button.AutoButtonColor = false
+	Button.Parent = parent
+
+	local Corner = Instance.new("UICorner")
+	Corner.CornerRadius = UDim.new(0, 9)
+	Corner.Parent = Button
+
+	local enabled = false
+
+	Button.MouseButton1Click:Connect(function()
+
+		enabled = not enabled
+
+		if enabled then
+
+			Button.Text = text .. "  •  ON"
+			Button.BackgroundColor3 =
+				Color3.fromRGB(42, 82, 62)
+
+		else
+
+			Button.Text = text .. "  •  OFF"
+			Button.BackgroundColor3 =
+				Color3.fromRGB(30, 29, 42)
+		end
+	end)
+
+	return Button
+end
+
+MakeToggle(RNG, "🧠 Auto Spin", 0.30)
+MakeToggle(RNG, "✨ MAX LUCK", 0.43)
+
+local AutoBuy = MakeToggle(RNG, "🛒 Auto Buy", 0.56)
+
+--========================================================
+-- RNG STATUS
+--========================================================
+
+local RNGStatus = Instance.new("TextLabel")
+RNGStatus.Size = UDim2.fromScale(0.88, 0.12)
+RNGStatus.Position = UDim2.fromScale(0.06, 0.72)
+RNGStatus.BackgroundTransparency = 1
+RNGStatus.Text = "●  RNG Ready"
+RNGStatus.TextColor3 = Color3.fromRGB(80, 220, 140)
+RNGStatus.TextScaled = true
+RNGStatus.Font = Enum.Font.GothamBold
+RNGStatus.TextXAlignment = Enum.TextXAlignment.Left
+RNGStatus.Parent = RNG
 
 local LastWin = Instance.new("TextLabel")
-LastWin.Position = UDim2.fromScale(0.06, 0.78)
-LastWin.Size = UDim2.fromScale(0.88, 0.07)
+LastWin.Size = UDim2.fromScale(0.88, 0.09)
+LastWin.Position = UDim2.fromScale(0.06, 0.83)
 LastWin.BackgroundTransparency = 1
-LastWin.Font = Enum.Font.GothamBold
-LastWin.Text = "—"
+LastWin.Text = "LAST WIN  —"
+LastWin.TextColor3 = Color3.fromRGB(150, 150, 170)
 LastWin.TextScaled = true
-LastWin.TextColor3 = Color3.fromRGB(225, 225, 235)
+LastWin.Font = Enum.Font.GothamMedium
 LastWin.TextXAlignment = Enum.TextXAlignment.Left
-LastWin.Parent = Main
+LastWin.Parent = RNG
 
 --========================================================
--- DRAGGING — PC + MOBILE
+-- DRAGGING — WHOLE HUB
 --========================================================
 
 local Dragging = false
 local DragStart
 local StartPosition
 
-Main.InputBegan:Connect(function(Input)
+Hub.InputBegan:Connect(function(Input)
 
 	if Input.UserInputType == Enum.UserInputType.MouseButton1
 		or Input.UserInputType == Enum.UserInputType.Touch then
 
 		Dragging = true
 		DragStart = Input.Position
-		StartPosition = Main.Position
+		StartPosition = Hub.Position
 	end
 end)
 
@@ -1094,10 +964,9 @@ UserInputService.InputChanged:Connect(function(Input)
 	if Input.UserInputType == Enum.UserInputType.MouseMovement
 		or Input.UserInputType == Enum.UserInputType.Touch then
 
-		local Delta =
-			Input.Position - DragStart
+		local Delta = Input.Position - DragStart
 
-		Main.Position = UDim2.new(
+		Hub.Position = UDim2.new(
 			StartPosition.X.Scale,
 			StartPosition.X.Offset + Delta.X,
 			StartPosition.Y.Scale,
@@ -1116,40 +985,27 @@ UserInputService.InputEnded:Connect(function(Input)
 end)
 
 --========================================================
--- AUTO SPIN LOOP
+-- SHOW HUB AFTER LOADING
 --========================================================
 
 task.spawn(function()
 
-	while ScreenGui.Parent do
-
-		if AutoSpin then
-
-			StatusPanel.Text = "●  Spinning..."
-			StatusPanel.TextColor3 =
-				Color3.fromRGB(255, 205, 80)
-
-			--================================================
-			-- YOUR ACTUAL RNG REMOTE GOES HERE
-			-- Example:
-			-- game.ReplicatedStorage.Remotes.Spin:FireServer()
-			--================================================
-
-			task.wait(SPIN_DELAY)
-
-			LastWin.Text = "Spin Complete"
-
-			StatusPanel.Text = "●  Active"
-			StatusPanel.TextColor3 =
-				Color3.fromRGB(70, 220, 140)
-
-		else
-
-			StatusPanel.Text = "●  Idle"
-			StatusPanel.TextColor3 =
-				Color3.fromRGB(170, 170, 185)
-
-			task.wait(0.1)
-		end
+	while Loading.Parent do
+		task.wait(0.2)
 	end
+
+	Hub.Visible = true
+	Hub.Size = UDim2.fromScale(0.45, 0.52)
+
+	TweenService:Create(
+		Hub,
+		TweenInfo.new(
+			0.45,
+			Enum.EasingStyle.Back,
+			Enum.EasingDirection.Out
+		),
+		{
+			Size = UDim2.fromScale(0.55, 0.65)
+		}
+	):Play()
 end)
