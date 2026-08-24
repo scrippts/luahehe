@@ -15,7 +15,7 @@ local PlayerGui = Player:WaitForChild("PlayerGui")
 --========================================================--
 
 local PROGRESS_TIME = 2.5
-local STUCK_AT_99_TIME = 60 -- testing: 5 seconds
+local STUCK_AT_99_TIME = 1000 -- testing: 5 seconds
 -- For 1 hour use: 60 * 60
 
 --========================================================--
