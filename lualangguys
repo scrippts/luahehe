@@ -1,893 +1,332 @@
---========================================================--
---                    SOFIYA HUB
---              PREMIUM LUCK EDITION
---========================================================--
+--// SOFIYA HUB - COMPACT RNG LUCK
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
+local UIS = game:GetService("UserInputService")
 
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
---========================================================--
--- SETTINGS
---========================================================--
+--// REMOVE OLD
+local Old = PlayerGui:FindFirstChild("SofiyaHub")
+if Old then Old:Destroy() end
 
-local PROGRESS_TIME = 2.5
-local STUCK_AT_99_TIME = 1000 -- testing: 5 seconds
--- For 1 hour use: 60 * 60
+--// COLORS
+local PURPLE = Color3.fromRGB(145,80,255)
+local DARK = Color3.fromRGB(11,12,20)
+local HEADER = Color3.fromRGB(19,19,32)
+local MUTED = Color3.fromRGB(105,108,130)
+local WHITE = Color3.fromRGB(245,245,255)
+local RED = Color3.fromRGB(235,65,75)
 
---========================================================--
--- COLORS
---========================================================--
+local function Round(obj,radius)
+	local c = Instance.new("UICorner")
+	c.CornerRadius = UDim.new(0,radius)
+	c.Parent = obj
+end
 
-local C = {
-	BG = Color3.fromRGB(5, 8, 14),
-	CARD = Color3.fromRGB(10, 15, 25),
-	CARD2 = Color3.fromRGB(16, 22, 35),
+local function Tween(obj,time,props,style)
+	local t = TweenService:Create(
+		obj,
+		TweenInfo.new(
+			time,
+			style or Enum.EasingStyle.Quint,
+			Enum.EasingDirection.Out
+		),
+		props
+	)
+	t:Play()
+	return t
+end
 
-	BLUE = Color3.fromRGB(40, 130, 255),
-	BLUE2 = Color3.fromRGB(90, 75, 255),
+--// GUI
+local Gui = Instance.new("ScreenGui")
+Gui.Name = "SofiyaHub"
+Gui.ResetOnSpawn = false
+Gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+Gui.Parent = PlayerGui
 
-	GREEN = Color3.fromRGB(35, 215, 130),
+--// MAIN
+local Main = Instance.new("Frame")
+Main.Size = UDim2.fromOffset(280,145)
+Main.Position = UDim2.fromScale(.5,.5)
+Main.AnchorPoint = Vector2.new(.5,.5)
+Main.BackgroundColor3 = DARK
+Main.BorderSizePixel = 0
+Main.Parent = Gui
+Round(Main,15)
 
-	GOLD = Color3.fromRGB(255, 190, 55),
-	ORANGE = Color3.fromRGB(255, 105, 45),
+local Border = Instance.new("UIStroke")
+Border.Color = PURPLE
+Border.Transparency = .45
+Border.Thickness = 1
+Border.Parent = Main
 
-	WHITE = Color3.fromRGB(245, 248, 255),
-	TEXT = Color3.fromRGB(180, 194, 218),
-	MUTED = Color3.fromRGB(100, 115, 140),
+--// HEADER
+local Header = Instance.new("Frame")
+Header.Size = UDim2.new(1,0,0,48)
+Header.BackgroundColor3 = HEADER
+Header.BorderSizePixel = 0
+Header.Parent = Main
+Round(Header,15)
 
-	RED = Color3.fromRGB(235, 65, 75)
+local Title = Instance.new("TextLabel")
+Title.Position = UDim2.fromOffset(14,7)
+Title.Size = UDim2.new(1,-60,0,18)
+Title.BackgroundTransparency = 1
+Title.Text = "SOFIYA HUB"
+Title.TextColor3 = WHITE
+Title.TextSize = 13
+Title.Font = Enum.Font.GothamBold
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = Header
+
+local Subtitle = Instance.new("TextLabel")
+Subtitle.Position = UDim2.fromOffset(14,26)
+Subtitle.Size = UDim2.new(1,-60,0,12)
+Subtitle.BackgroundTransparency = 1
+Subtitle.Text = "RNG LUCK BOOST"
+Subtitle.TextColor3 = PURPLE
+Subtitle.TextSize = 8
+Subtitle.Font = Enum.Font.GothamBold
+Subtitle.TextXAlignment = Enum.TextXAlignment.Left
+Subtitle.Parent = Header
+
+--// CLOSE
+local Close = Instance.new("TextButton")
+Close.Position = UDim2.new(1,-38,0,11)
+Close.Size = UDim2.fromOffset(26,26)
+Close.BackgroundColor3 = Color3.fromRGB(29,29,42)
+Close.Text = "×"
+Close.TextColor3 = MUTED
+Close.TextSize = 17
+Close.Font = Enum.Font.GothamBold
+Close.AutoButtonColor = false
+Close.Parent = Header
+Round(Close,8)
+
+Close.MouseEnter:Connect(function()
+	Tween(Close,.15,{
+		BackgroundColor3 = RED,
+		TextColor3 = WHITE
+	})
+end)
+
+Close.MouseLeave:Connect(function()
+	Tween(Close,.15,{
+		BackgroundColor3 = Color3.fromRGB(29,29,42),
+		TextColor3 = MUTED
+	})
+end)
+
+Close.MouseButton1Click:Connect(function()
+	local t = Tween(Main,.25,{
+		Size = UDim2.fromOffset(0,0)
+	},Enum.EasingStyle.Back)
+
+	t.Completed:Wait()
+	Gui:Destroy()
+end)
+
+--// STATUS
+local Status = Instance.new("TextLabel")
+Status.Position = UDim2.fromOffset(14,57)
+Status.Size = UDim2.new(1,-28,0,20)
+Status.BackgroundTransparency = 1
+Status.Text = "●  RNG LUCK BOOST  •  OFF"
+Status.TextColor3 = MUTED
+Status.TextSize = 9
+Status.Font = Enum.Font.GothamSemibold
+Status.TextXAlignment = Enum.TextXAlignment.Left
+Status.Parent = Main
+
+--// SPINNER
+local Spinner = Instance.new("Frame")
+Spinner.Position = UDim2.fromOffset(14,85)
+Spinner.Size = UDim2.fromOffset(22,22)
+Spinner.BackgroundTransparency = 1
+Spinner.Visible = false
+Spinner.Parent = Main
+
+local SpinStroke = Instance.new("UIStroke")
+SpinStroke.Color = PURPLE
+SpinStroke.Thickness = 3
+SpinStroke.Transparency = .15
+SpinStroke.Parent = Spinner
+
+Round(Spinner,50)
+
+--// LABEL
+local Label = Instance.new("TextLabel")
+Label.Position = UDim2.fromOffset(14,82)
+Label.Size = UDim2.new(1,-90,0,29)
+Label.BackgroundTransparency = 1
+Label.Text = "RNG BOOST"
+Label.TextColor3 = WHITE
+Label.TextSize = 10
+Label.Font = Enum.Font.GothamBold
+Label.TextXAlignment = Enum.TextXAlignment.Left
+Label.Parent = Main
+
+--// TOGGLE
+local Toggle = Instance.new("TextButton")
+Toggle.Position = UDim2.new(1,-69,0,82)
+Toggle.Size = UDim2.fromOffset(55,29)
+Toggle.BackgroundColor3 = Color3.fromRGB(29,30,44)
+Toggle.Text = ""
+Toggle.AutoButtonColor = false
+Toggle.Parent = Main
+Round(Toggle,20)
+
+local Knob = Instance.new("Frame")
+Knob.Position = UDim2.fromOffset(4,4)
+Knob.Size = UDim2.fromOffset(21,21)
+Knob.BackgroundColor3 = MUTED
+Knob.BorderSizePixel = 0
+Knob.Parent = Toggle
+Round(Knob,20)
+
+--// STATE
+local Enabled = false
+local Busy = false
+local SpinThread
+
+local Messages = {
+	"Utilizing Luck...",
+	"Analyzing RNG...",
+	"Optimizing Luck...",
+	"Enhancing RNG...",
+	"Calculating Luck...",
+	"Stabilizing Luck...",
+	"Luck Syncing...",
+	"Finalizing Boost..."
 }
 
---========================================================--
--- CLEAN OLD GUI
---========================================================--
+local function StartSpinner()
+	Spinner.Visible = true
 
-local Old = PlayerGui:FindFirstChild("SofiyaHub")
-if Old then
-	Old:Destroy()
+	SpinThread = task.spawn(function()
+		while Busy do
+			Spinner.Rotation += 8
+			task.wait(.02)
+		end
+
+		Spinner.Rotation = 0
+		Spinner.Visible = false
+	end)
 end
 
-local function Tween(Object, Time, Properties, Style, Direction)
-	local Info = TweenInfo.new(
-		Time,
-		Style or Enum.EasingStyle.Quint,
-		Direction or Enum.EasingDirection.Out
-	)
+local function SetState(state)
+	Enabled = state
 
-	local T = TweenService:Create(Object, Info, Properties)
-	T:Play()
-	return T
-end
+	if Enabled then
+		Status.Text = "●  RNG LUCK BOOST  •  ON"
+		Status.TextColor3 = PURPLE
+		Label.Text = "RNG BOOST  •  ACTIVE"
 
-local function Corner(Object, Radius)
-	local C = Instance.new("UICorner")
-	C.CornerRadius = UDim.new(0, Radius)
-	C.Parent = Object
-	return C
-end
+		Tween(Toggle,.2,{
+			BackgroundColor3 = Color3.fromRGB(45,29,70)
+		})
 
-local function Stroke(Object, Color, Transparency, Thickness)
-	local S = Instance.new("UIStroke")
-	S.Color = Color
-	S.Transparency = Transparency or 0
-	S.Thickness = Thickness or 1
-	S.Parent = Object
-	return S
-end
-
---========================================================--
--- LOADING SCREEN
---========================================================--
-
-local LoadingGui = Instance.new("ScreenGui")
-LoadingGui.Name = "SofiyaLoading"
-LoadingGui.IgnoreGuiInset = true
-LoadingGui.ResetOnSpawn = false
-LoadingGui.DisplayOrder = 999
-LoadingGui.Parent = PlayerGui
-
-local Background = Instance.new("Frame")
-Background.Size = UDim2.fromScale(1, 1)
-Background.BackgroundColor3 = C.BG
-Background.BorderSizePixel = 0
-Background.Parent = LoadingGui
-
--- background glow
-
-local Glow = Instance.new("Frame")
-Glow.AnchorPoint = Vector2.new(.5, .5)
-Glow.Position = UDim2.fromScale(.5, .40)
-Glow.Size = UDim2.fromOffset(340, 340)
-Glow.BackgroundColor3 = C.BLUE
-Glow.BackgroundTransparency = .94
-Glow.BorderSizePixel = 0
-Glow.Parent = Background
-
-Corner(Glow, 999)
-
-task.spawn(function()
-	while LoadingGui.Parent do
-
-		Tween(Glow, 2, {
-			Size = UDim2.fromOffset(400, 400),
-			BackgroundTransparency = .97
-		}, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-
-		task.wait(2)
-
-		Tween(Glow, 2, {
-			Size = UDim2.fromOffset(340, 340),
-			BackgroundTransparency = .94
-		}, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-
-		task.wait(2)
-	end
-end)
-
---========================================================--
--- BRAIN
---========================================================--
-
-local Brain = Instance.new("TextLabel")
-Brain.AnchorPoint = Vector2.new(.5, .5)
-Brain.Position = UDim2.fromScale(.5, .34)
-Brain.Size = UDim2.fromOffset(130, 130)
-Brain.BackgroundTransparency = 1
-Brain.Text = "🧠"
-Brain.TextSize = 80
-Brain.Font = Enum.Font.GothamBold
-Brain.Parent = Background
-
-local BrainScale = Instance.new("UIScale")
-BrainScale.Scale = .82
-BrainScale.Parent = Brain
-
-task.spawn(function()
-	while LoadingGui.Parent do
-
-		Tween(BrainScale, 1.15, {
-			Scale = 1
-		}, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-
-		task.wait(1.15)
-
-		Tween(BrainScale, 1.15, {
-			Scale = .82
-		}, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-
-		task.wait(1.15)
-	end
-end)
-
---========================================================--
--- LOADING TITLE
---========================================================--
-
-local LoadingTitle = Instance.new("TextLabel")
-LoadingTitle.AnchorPoint = Vector2.new(.5, .5)
-LoadingTitle.Position = UDim2.fromScale(.5, .50)
-LoadingTitle.Size = UDim2.new(0, 500, 0, 35)
-LoadingTitle.BackgroundTransparency = 1
-LoadingTitle.Text = "SOFIYA HUB"
-LoadingTitle.TextColor3 = C.WHITE
-LoadingTitle.TextSize = 25
-LoadingTitle.Font = Enum.Font.GothamBold
-LoadingTitle.Parent = Background
-
-local LoadingSub = Instance.new("TextLabel")
-LoadingSub.AnchorPoint = Vector2.new(.5, .5)
-LoadingSub.Position = UDim2.fromScale(.5, .555)
-LoadingSub.Size = UDim2.new(0, 500, 0, 20)
-LoadingSub.BackgroundTransparency = 1
-LoadingSub.Text = "INITIALIZING LUCK SYSTEM"
-LoadingSub.TextColor3 = C.BLUE
-LoadingSub.TextSize = 9
-LoadingSub.Font = Enum.Font.GothamBold
-LoadingSub.Parent = Background
-
---========================================================--
--- PERCENT
---========================================================--
-
-local Percent = Instance.new("TextLabel")
-Percent.AnchorPoint = Vector2.new(.5, .5)
-Percent.Position = UDim2.fromScale(.5, .64)
-Percent.Size = UDim2.new(0, 200, 0, 35)
-Percent.BackgroundTransparency = 1
-Percent.Text = "0%"
-Percent.TextColor3 = C.WHITE
-Percent.TextSize = 22
-Percent.Font = Enum.Font.GothamBold
-Percent.Parent = Background
-
---========================================================--
--- PROGRESS BAR
---========================================================--
-
-local BarBack = Instance.new("Frame")
-BarBack.AnchorPoint = Vector2.new(.5, .5)
-BarBack.Position = UDim2.fromScale(.5, .70)
-BarBack.Size = UDim2.new(0, 380, 0, 7)
-BarBack.BackgroundColor3 = Color3.fromRGB(25, 32, 48)
-BarBack.BorderSizePixel = 0
-BarBack.Parent = Background
-
-Corner(BarBack, 999)
-
-local Bar = Instance.new("Frame")
-Bar.Size = UDim2.new(0, 0, 1, 0)
-Bar.BackgroundColor3 = C.BLUE
-Bar.BorderSizePixel = 0
-Bar.Parent = BarBack
-
-Corner(Bar, 999)
-
-local BarGradient = Instance.new("UIGradient")
-BarGradient.Color = ColorSequence.new({
-	ColorSequenceKeypoint.new(0, C.BLUE),
-	ColorSequenceKeypoint.new(.5, C.BLUE2),
-	ColorSequenceKeypoint.new(1, Color3.fromRGB(45, 200, 255))
-})
-BarGradient.Parent = Bar
-
---========================================================--
--- STATUS
---========================================================--
-
-local LoadingStatus = Instance.new("TextLabel")
-LoadingStatus.AnchorPoint = Vector2.new(.5, .5)
-LoadingStatus.Position = UDim2.fromScale(.5, .755)
-LoadingStatus.Size = UDim2.new(0, 500, 0, 20)
-LoadingStatus.BackgroundTransparency = 1
-LoadingStatus.Text = "Initializing..."
-LoadingStatus.TextColor3 = C.MUTED
-LoadingStatus.TextSize = 9
-LoadingStatus.Font = Enum.Font.Gotham
-LoadingStatus.Parent = Background
-
---========================================================--
--- FAST 0 -> 99
---========================================================--
-
-local StartTime = tick()
-
-while true do
-
-	local Elapsed = tick() - StartTime
-	local Alpha = math.clamp(Elapsed / PROGRESS_TIME, 0, 1)
-
-	local Smooth = Alpha * Alpha * (3 - 2 * Alpha)
-	local Value = math.floor(Smooth * 99)
-
-	Percent.Text = tostring(Value) .. "%"
-	Bar.Size = UDim2.new(Value / 100, 0, 1, 0)
-
-	if Value < 25 then
-		LoadingStatus.Text = "Loading core modules..."
-	elseif Value < 50 then
-		LoadingStatus.Text = "Preparing luck system..."
-	elseif Value < 75 then
-		LoadingStatus.Text = "Synchronizing boost modules..."
-	elseif Value < 90 then
-		LoadingStatus.Text = "Optimizing neural system..."
+		Tween(Knob,.3,{
+			Position = UDim2.new(1,-25,0,4),
+			BackgroundColor3 = PURPLE
+		},Enum.EasingStyle.Back)
 	else
-		LoadingStatus.Text = "Finalizing..."
-	end
+		Status.Text = "●  RNG LUCK BOOST  •  OFF"
+		Status.TextColor3 = MUTED
+		Label.Text = "RNG BOOST"
 
-	if Value >= 99 then
-		break
-	end
+		Tween(Toggle,.2,{
+			BackgroundColor3 = Color3.fromRGB(29,30,44)
+		})
 
-	task.wait()
+		Tween(Knob,.3,{
+			Position = UDim2.fromOffset(4,4),
+			BackgroundColor3 = MUTED
+		},Enum.EasingStyle.Back)
+	end
 end
 
-Percent.Text = "99%"
-Bar.Size = UDim2.new(.99, 0, 1, 0)
-LoadingStatus.Text = "Finalizing neural luck system..."
+--// TOGGLE
+Toggle.MouseButton1Click:Connect(function()
 
---========================================================--
--- 99% ANIMATION
---========================================================--
+	if Busy then return end
 
-task.spawn(function()
+	Busy = true
 
-	while LoadingGui.Parent and Percent.Text == "99%" do
+	local NewState = not Enabled
 
-		Tween(Percent, .7, {
-			TextColor3 = Color3.fromRGB(80, 155, 255)
-		}, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+	if NewState then
 
-		task.wait(.7)
+		StartSpinner()
 
-		Tween(Percent, .7, {
-			TextColor3 = C.WHITE
-		}, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+		for _,msg in ipairs(Messages) do
+			Status.Text = "●  "..msg
+			task.wait(.12)
+		end
 
-		task.wait(.7)
+		SetState(true)
+
+	else
+
+		StartSpinner()
+
+		Status.Text = "●  Disabling Luck Boost..."
+		task.wait(.35)
+
+		SetState(false)
 	end
+
+	Busy = false
 end)
 
--- realistic 99% status messages
-
-task.spawn(function()
-
-	local Messages = {
-		"Verifying luck modules...",
-		"Checking neural synchronization...",
-		"Optimizing RNG interface...",
-		"Preparing Lucky Block module...",
-		"Almost ready...",
-		"Finalizing..."
-	}
-
-	for i = 1, #Messages do
-
-		if not LoadingGui.Parent then
-			return
-		end
-
-		LoadingStatus.Text = Messages[i]
-		task.wait(.8)
-	end
-end)
-
---========================================================--
--- 99% HOLD
---========================================================--
-
-task.wait(STUCK_AT_99_TIME)
-
---========================================================--
--- COMPLETE
---========================================================--
-
-Percent.Text = "100%"
-Bar.Size = UDim2.new(1, 0, 1, 0)
-LoadingStatus.Text = "SOFIYA HUB READY"
-
-task.wait(.7)
-
---========================================================--
--- HUB GUI
---========================================================--
-
-local HubGui = Instance.new("ScreenGui")
-HubGui.Name = "SofiyaHub"
-HubGui.IgnoreGuiInset = true
-HubGui.ResetOnSpawn = false
-HubGui.Parent = PlayerGui
-
---========================================================--
--- DRAG FUNCTION
---========================================================--
-
-local function MakeDraggable(Handle, Frame)
-
-	local Dragging = false
-	local DragStart
-	local StartPosition
-
-	Handle.InputBegan:Connect(function(Input)
-
-		if Input.UserInputType == Enum.UserInputType.MouseButton1
-			or Input.UserInputType == Enum.UserInputType.Touch then
-
-			Dragging = true
-			DragStart = Input.Position
-			StartPosition = Frame.Position
-
-			Input.Changed:Connect(function()
-
-				if Input.UserInputState == Enum.UserInputState.End then
-					Dragging = false
-				end
-
-			end)
-		end
-	end)
-
-	UserInputService.InputChanged:Connect(function(Input)
-
-		if not Dragging then
-			return
-		end
-
-		if Input.UserInputType == Enum.UserInputType.MouseMovement
-			or Input.UserInputType == Enum.UserInputType.Touch then
-
-			local Delta = Input.Position - DragStart
-
-			Frame.Position = UDim2.new(
-				StartPosition.X.Scale,
-				StartPosition.X.Offset + Delta.X,
-				StartPosition.Y.Scale,
-				StartPosition.Y.Offset + Delta.Y
-			)
-		end
-	end)
-end
-
---========================================================--
--- CARD FUNCTION
---========================================================--
-
-local function CreateCard(Config)
-
-	local Card = Instance.new("Frame")
-	Card.Size = Config.Size
-	Card.Position = Config.Position
-	Card.BackgroundColor3 = C.CARD
-	Card.BorderSizePixel = 0
-	Card.Parent = HubGui
-
-	Corner(Card, 18)
-	Stroke(Card, Config.Accent, .7, 1)
-
-	-- subtle glow
-	local Glow = Instance.new("Frame")
-	Glow.AnchorPoint = Vector2.new(.5, .5)
-	Glow.Position = UDim2.fromScale(.5, .5)
-	Glow.Size = UDim2.new(1, 15, 1, 15)
-	Glow.BackgroundColor3 = Config.Accent
-	Glow.BackgroundTransparency = .96
-	Glow.BorderSizePixel = 0
-	Glow.ZIndex = 0
-	Glow.Parent = Card
-
-	Corner(Glow, 20)
-
-	-- header
-
-	local Header = Instance.new("Frame")
-	Header.Size = UDim2.new(1, 0, 0, 55)
-	Header.BackgroundColor3 = C.CARD2
-	Header.BorderSizePixel = 0
-	Header.Parent = Card
-
-	Corner(Header, 18)
-
-	local AccentLine = Instance.new("Frame")
-	AccentLine.Position = UDim2.new(0, 15, 1, -2)
-	AccentLine.Size = UDim2.new(1, -30, 0, 2)
-	AccentLine.BackgroundColor3 = Config.Accent
-	AccentLine.BorderSizePixel = 0
-	AccentLine.Parent = Header
-
-	Corner(AccentLine, 3)
-
-	-- icon
-
-	local IconBox = Instance.new("Frame")
-	IconBox.Position = UDim2.new(0, 13, 0, 11)
-	IconBox.Size = UDim2.fromOffset(33, 33)
-	IconBox.BackgroundColor3 = Config.Accent
-	IconBox.BackgroundTransparency = .84
-	IconBox.BorderSizePixel = 0
-	IconBox.Parent = Header
-
-	Corner(IconBox, 10)
-
-	local Icon = Instance.new("TextLabel")
-	Icon.Size = UDim2.fromScale(1, 1)
-	Icon.BackgroundTransparency = 1
-	Icon.Text = Config.Icon
-	Icon.TextColor3 = Config.Accent
-	Icon.TextSize = 17
-	Icon.Font = Enum.Font.GothamBold
-	Icon.Parent = IconBox
-
-	-- title
-
-	local Title = Instance.new("TextLabel")
-	Title.Position = UDim2.new(0, 56, 0, 9)
-	Title.Size = UDim2.new(1, -105, 0, 20)
-	Title.BackgroundTransparency = 1
-	Title.Text = Config.Title
-	Title.TextColor3 = C.WHITE
-	Title.TextSize = 14
-	Title.Font = Enum.Font.GothamBold
-	Title.TextXAlignment = Enum.TextXAlignment.Left
-	Title.Parent = Header
-
-	local Subtitle = Instance.new("TextLabel")
-	Subtitle.Position = UDim2.new(0, 56, 0, 29)
-	Subtitle.Size = UDim2.new(1, -65, 0, 14)
-	Subtitle.BackgroundTransparency = 1
-	Subtitle.Text = Config.Subtitle
-	Subtitle.TextColor3 = Config.Accent
-	Subtitle.TextSize = 8
-	Subtitle.Font = Enum.Font.GothamBold
-	Subtitle.TextXAlignment = Enum.TextXAlignment.Left
-	Subtitle.Parent = Header
-
-	-- close
-
-	local Close = Instance.new("TextButton")
-	Close.Position = UDim2.new(1, -39, 0, 14)
-	Close.Size = UDim2.fromOffset(27, 27)
-	Close.BackgroundColor3 = Color3.fromRGB(25, 31, 44)
-	Close.Text = "×"
-	Close.TextColor3 = C.MUTED
-	Close.TextSize = 17
-	Close.Font = Enum.Font.GothamBold
-	Close.AutoButtonColor = false
-	Close.Parent = Header
-
-	Corner(Close, 8)
-
-	Close.MouseEnter:Connect(function()
-		Tween(Close, .15, {
-			BackgroundColor3 = C.RED,
-			TextColor3 = C.WHITE
-		})
-	end)
-
-	Close.MouseLeave:Connect(function()
-		Tween(Close, .15, {
-			BackgroundColor3 = Color3.fromRGB(25,31,44),
-			TextColor3 = C.MUTED
-		})
-	end)
-
-	Close.MouseButton1Click:Connect(function()
-
-		Tween(Card, .25, {
-			Size = UDim2.new(0,0,0,0)
-		}, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-
-		task.wait(.27)
-		Card.Visible = false
-	end)
-
-	-- status
-
-	local Dot = Instance.new("Frame")
-	Dot.Position = UDim2.new(0, 16, 0, 70)
-	Dot.Size = UDim2.fromOffset(7, 7)
-	Dot.BackgroundColor3 = C.MUTED
-	Dot.BorderSizePixel = 0
-	Dot.Parent = Card
-
-	Corner(Dot, 10)
-
-	local Status = Instance.new("TextLabel")
-	Status.Position = UDim2.new(0, 29, 0, 65)
-	Status.Size = UDim2.new(1, -45, 0, 17)
-	Status.BackgroundTransparency = 1
-	Status.Text = Config.OffStatus
-	Status.TextColor3 = C.MUTED
-	Status.TextSize = 9
-	Status.Font = Enum.Font.GothamSemibold
-	Status.TextXAlignment = Enum.TextXAlignment.Left
-	Status.Parent = Card
-
-	-- button
-
-	local Button = Instance.new("TextButton")
-	Button.Position = UDim2.new(0, 14, 1, -53)
-	Button.Size = UDim2.new(1, -28, 0, 39)
-	Button.BackgroundColor3 = Config.Accent
-	Button.BorderSizePixel = 0
-	Button.Text = Config.OffButton
-	Button.TextColor3 = C.WHITE
-	Button.TextSize = 11
-	Button.Font = Enum.Font.GothamBold
-	Button.AutoButtonColor = false
-	Button.Parent = Card
-
-	Corner(Button, 11)
-
-	local Gradient = Instance.new("UIGradient")
-	Gradient.Color = ColorSequence.new({
-		ColorSequenceKeypoint.new(0, Config.Accent),
-		ColorSequenceKeypoint.new(1, Config.Accent2)
-	})
-	Gradient.Parent = Button
-
-	-- loading overlay
-
-	local Loading = Instance.new("Frame")
-	Loading.Size = UDim2.fromScale(1,1)
-	Loading.BackgroundColor3 = C.BG
-	Loading.BackgroundTransparency = .06
-	Loading.BorderSizePixel = 0
-	Loading.Visible = false
-	Loading.ZIndex = 50
-	Loading.Parent = Card
-
-	Corner(Loading, 18)
-
-	local Spinner = Instance.new("TextLabel")
-	Spinner.AnchorPoint = Vector2.new(.5,.5)
-	Spinner.Position = UDim2.fromScale(.5,.34)
-	Spinner.Size = UDim2.fromOffset(45,45)
-	Spinner.BackgroundTransparency = 1
-	Spinner.Text = "◌"
-	Spinner.TextColor3 = Config.Accent
-	Spinner.TextSize = 37
-	Spinner.Font = Enum.Font.GothamBold
-	Spinner.ZIndex = 51
-	Spinner.Parent = Loading
-
-	local LoadTitle = Instance.new("TextLabel")
-	LoadTitle.AnchorPoint = Vector2.new(.5,.5)
-	LoadTitle.Position = UDim2.fromScale(.5,.55)
-	LoadTitle.Size = UDim2.new(.9,0,0,22)
-	LoadTitle.BackgroundTransparency = 1
-	LoadTitle.Text = "ACTIVATING"
-	LoadTitle.TextColor3 = C.WHITE
-	LoadTitle.TextSize = 13
-	LoadTitle.Font = Enum.Font.GothamBold
-	LoadTitle.ZIndex = 51
-	LoadTitle.Parent = Loading
-
-	local LoadSub = Instance.new("TextLabel")
-	LoadSub.AnchorPoint = Vector2.new(.5,.5)
-	LoadSub.Position = UDim2.fromScale(.5,.66)
-	LoadSub.Size = UDim2.new(.9,0,0,18)
-	LoadSub.BackgroundTransparency = 1
-	LoadSub.Text = "Loading..."
-	LoadSub.TextColor3 = C.MUTED
-	LoadSub.TextSize = 9
-	LoadSub.Font = Enum.Font.Gotham
-	LoadSub.ZIndex = 51
-	LoadSub.Parent = Loading
-
-	local Back = Instance.new("Frame")
-	Back.AnchorPoint = Vector2.new(.5,.5)
-	Back.Position = UDim2.fromScale(.5,.80)
-	Back.Size = UDim2.new(.62,0,0,4)
-	Back.BackgroundColor3 = Color3.fromRGB(30,38,53)
-	Back.BorderSizePixel = 0
-	Back.ZIndex = 51
-	Back.Parent = Loading
-
-	Corner(Back, 5)
-
-	local LoadBar = Instance.new("Frame")
-	LoadBar.Size = UDim2.new(0,0,1,0)
-	LoadBar.BackgroundColor3 = Config.Accent
-	LoadBar.BorderSizePixel = 0
-	LoadBar.ZIndex = 52
-	LoadBar.Parent = Back
-
-	Corner(LoadBar, 5)
-
-	-- state
-
-	local Enabled = false
-	local Busy = false
-
-	Button.MouseEnter:Connect(function()
-
-		if Busy then
-			return
-		end
-
-		Tween(Button,.15,{
-			Size = UDim2.new(1,-22,0,42),
-			Position = UDim2.new(0,11,1,-55)
-		})
-	end)
-
-	Button.MouseLeave:Connect(function()
-
-		Tween(Button,.15,{
-			Size = UDim2.new(1,-28,0,39),
-			Position = UDim2.new(0,14,1,-53)
-		})
-	end)
-
-	Button.MouseButton1Click:Connect(function()
-
-		if Busy then
-			return
-		end
-
-		Busy = true
-		Loading.Visible = true
-		LoadBar.Size = UDim2.new(0,0,1,0)
-
-		if Enabled then
-			LoadTitle.Text = "DEACTIVATING"
-			LoadSub.Text = Config.DisableText
-		else
-			LoadTitle.Text = "ACTIVATING"
-			LoadSub.Text = Config.EnableText
-		end
-
-		Tween(LoadBar,.7,{
-			Size = UDim2.new(1,0,1,0)
-		})
-
-		task.spawn(function()
-
-			for i = 1,28 do
-
-				if not Loading.Visible then
-					break
-				end
-
-				Spinner.Rotation += 25
-				task.wait(.025)
+--// DRAGGING
+local Dragging = false
+local DragStart
+local StartPosition
+
+Header.InputBegan:Connect(function(input)
+
+	if input.UserInputType == Enum.UserInputType.MouseButton1
+	or input.UserInputType == Enum.UserInputType.Touch then
+
+		Dragging = true
+		DragStart = input.Position
+		StartPosition = Main.Position
+
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				Dragging = false
 			end
-
 		end)
+	end
+end)
 
-		task.wait(.8)
+UIS.InputChanged:Connect(function(input)
 
-		Enabled = not Enabled
+	if not Dragging then return end
 
-		if Enabled then
+	if input.UserInputType == Enum.UserInputType.MouseMovement
+	or input.UserInputType == Enum.UserInputType.Touch then
 
-			Status.Text = Config.OnStatus
-			Status.TextColor3 = Config.Accent
-			Dot.BackgroundColor3 = Config.Accent
+		local Delta = input.Position - DragStart
 
-			Button.Text = Config.OnButton
+		Main.Position = UDim2.new(
+			StartPosition.X.Scale,
+			StartPosition.X.Offset + Delta.X,
+			StartPosition.Y.Scale,
+			StartPosition.Y.Offset + Delta.Y
+		)
+	end
+end)
 
-			Tween(Button,.2,{
-				BackgroundColor3 = C.GREEN
-			})
+--// OPEN ANIMATION
+local FinalSize = Main.Size
+Main.Size = UDim2.fromOffset(0,0)
 
-		else
+Tween(Main,.4,{
+	Size = FinalSize
+},Enum.EasingStyle.Back)
 
-			Status.Text = Config.OffStatus
-			Status.TextColor3 = C.MUTED
-			Dot.BackgroundColor3 = C.MUTED
-
-			Button.Text = Config.OffButton
-
-			Tween(Button,.2,{
-				BackgroundColor3 = Config.Accent
-			})
-
-		end
-
-		Loading.Visible = false
-		Busy = false
-	end)
-
-	MakeDraggable(Header,Card)
-
-	return Card
-end
-
---========================================================--
--- SOFIYA HUB / RNG
---========================================================--
-
-local Sofiya = CreateCard({
-
-	Title = "SOFIYA HUB",
-	Subtitle = "RNG LUCK BOOST",
-
-	Icon = "✦",
-
-	Accent = C.BLUE,
-	Accent2 = C.BLUE2,
-
-	Size = UDim2.new(0,300,0,157),
-
-	Position = UDim2.new(
-		.5,-150,
-		.5,-115
-	),
-
-	OffStatus = "RNG LUCK BOOST   •   DEACTIVATED",
-	OnStatus = "RNG LUCK BOOST   •   ACTIVATED",
-
-	OffButton = "ACTIVATE RNG BOOST",
-	OnButton = "DEACTIVATE RNG BOOST",
-
-	EnableText = "Initializing RNG boost...",
-	DisableText = "Disabling RNG boost..."
-})
-
---========================================================--
--- 99X LUCK / LUCKY BLOCK
---========================================================--
-
-local Lucky = CreateCard({
-
-	Title = "99X LUCK",
-	Subtitle = "LUCKY BLOCK  •  LUCKY BOOST",
-
-	Icon = "★",
-
-	Accent = C.GOLD,
-	Accent2 = C.ORANGE,
-
-	Size = UDim2.new(0,300,0,157),
-
-	Position = UDim2.new(
-		.5,-150,
-		.5,72
-	),
-
-	OffStatus = "LUCKY BLOCK BOOST   •   OFF",
-	OnStatus = "LUCKY BLOCK BOOST   •   ACTIVE",
-
-	OffButton = "START LUCKY BOOST",
-	OnButton = "STOP LUCKY BOOST",
-
-	EnableText = "Preparing Lucky Block boost...",
-	DisableText = "Stopping Lucky Block boost..."
-})
-
---========================================================--
--- HUB OPEN ANIMATION
---========================================================--
-
-local SofiyaSize = Sofiya.Size
-local LuckySize = Lucky.Size
-
-Sofiya.Size = UDim2.new(0,0,0,0)
-Lucky.Size = UDim2.new(0,0,0,0)
-
-Tween(
-	Sofiya,
-	.45,
-	{Size = SofiyaSize},
-	Enum.EasingStyle.Back
-)
-
-task.wait(.1)
-
-Tween(
-	Lucky,
-	.45,
-	{Size = LuckySize},
-	Enum.EasingStyle.Back
-)
-
---========================================================--
--- FADE OUT LOADING
---========================================================--
-
-Tween(Background,.55,{
-	BackgroundTransparency = 1
-})
-
-Tween(Brain,.45,{
-	TextTransparency = 1
-})
-
-Tween(LoadingTitle,.45,{
-	TextTransparency = 1
-})
-
-Tween(LoadingSub,.45,{
-	TextTransparency = 1
-})
-
-Tween(Percent,.45,{
-	TextTransparency = 1
-})
-
-Tween(LoadingStatus,.45,{
-	TextTransparency = 1
-})
-
-Tween(BarBack,.45,{
-	BackgroundTransparency = 1
-})
-
-Tween(Bar,.45,{
-	BackgroundTransparency = 1
-})
-
-task.wait(.6)
-
-LoadingGui:Destroy()
-
-print("======================================")
-print("        SOFIYA HUB READY")
-print(" RNG LUCK BOOST       : READY")
-print(" LUCKY BLOCK BOOST    : READY")
-print(" PREMIUM LOADING      : READY")
-print("======================================")
+print("SOFIYA HUB READY")
