@@ -1,4 +1,4 @@
---// SOFIYA HUB - COMPACT RNG LUCK
+--// SOFIYA HUB - COMPACT CRAFT MACHINE
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
@@ -9,7 +9,9 @@ local PlayerGui = Player:WaitForChild("PlayerGui")
 
 --// REMOVE OLD
 local Old = PlayerGui:FindFirstChild("SofiyaHub")
-if Old then Old:Destroy() end
+if Old then
+	Old:Destroy()
+end
 
 --// COLORS
 local PURPLE = Color3.fromRGB(145,80,255)
@@ -70,6 +72,7 @@ Header.BorderSizePixel = 0
 Header.Parent = Main
 Round(Header,15)
 
+--// TITLE
 local Title = Instance.new("TextLabel")
 Title.Position = UDim2.fromOffset(14,7)
 Title.Size = UDim2.new(1,-60,0,18)
@@ -81,13 +84,14 @@ Title.Font = Enum.Font.GothamBold
 Title.TextXAlignment = Enum.TextXAlignment.Left
 Title.Parent = Header
 
+--// SUBTITLE
 local Subtitle = Instance.new("TextLabel")
 Subtitle.Position = UDim2.fromOffset(14,26)
 Subtitle.Size = UDim2.new(1,-60,0,12)
 Subtitle.BackgroundTransparency = 1
-Subtitle.Text = "RNG LUCK BOOST"
+Subtitle.Text = "CRAFT MACHINE • MANIPULATE SPAWN"
 Subtitle.TextColor3 = PURPLE
-Subtitle.TextSize = 8
+Subtitle.TextSize = 7
 Subtitle.Font = Enum.Font.GothamBold
 Subtitle.TextXAlignment = Enum.TextXAlignment.Left
 Subtitle.Parent = Header
@@ -133,7 +137,7 @@ local Status = Instance.new("TextLabel")
 Status.Position = UDim2.fromOffset(14,57)
 Status.Size = UDim2.new(1,-28,0,20)
 Status.BackgroundTransparency = 1
-Status.Text = "●  RNG LUCK BOOST  •  OFF"
+Status.Text = "●  CRAFT MACHINE  •  OFF"
 Status.TextColor3 = MUTED
 Status.TextSize = 9
 Status.Font = Enum.Font.GothamSemibold
@@ -161,7 +165,7 @@ local Label = Instance.new("TextLabel")
 Label.Position = UDim2.fromOffset(14,82)
 Label.Size = UDim2.new(1,-90,0,29)
 Label.BackgroundTransparency = 1
-Label.Text = "RNG BOOST"
+Label.Text = "MANIPULATE SPAWN"
 Label.TextColor3 = WHITE
 Label.TextSize = 10
 Label.Font = Enum.Font.GothamBold
@@ -191,21 +195,25 @@ local Enabled = false
 local Busy = false
 local SpinThread
 
+--// CRAFT MACHINE MESSAGES
 local Messages = {
-	"Utilizing Luck...",
-	"Analyzing RNG...",
-	"Optimizing Luck...",
-	"Enhancing RNG...",
-	"Calculating Luck...",
-	"Stabilizing Luck...",
-	"Luck Syncing...",
-	"Finalizing Boost..."
+	"Initializing Craft Machine...",
+	"Analyzing spawn patterns...",
+	"Manipulating spawn...",
+	"Optimizing spawn selection...",
+	"Searching best brainrot...",
+	"Adjusting spawn priority...",
+	"Crafting optimal spawn...",
+	"Finalizing manipulation..."
 }
 
+--// SPINNER
 local function StartSpinner()
+
 	Spinner.Visible = true
 
 	SpinThread = task.spawn(function()
+
 		while Busy do
 			Spinner.Rotation += 8
 			task.wait(.02)
@@ -213,16 +221,22 @@ local function StartSpinner()
 
 		Spinner.Rotation = 0
 		Spinner.Visible = false
+
 	end)
+
 end
 
+--// SET STATE
 local function SetState(state)
+
 	Enabled = state
 
 	if Enabled then
-		Status.Text = "●  RNG LUCK BOOST  •  ON"
+
+		Status.Text = "●  CRAFT MACHINE  •  ON"
 		Status.TextColor3 = PURPLE
-		Label.Text = "RNG BOOST  •  ACTIVE"
+
+		Label.Text = "MANIPULATE SPAWN  •  ACTIVE"
 
 		Tween(Toggle,.2,{
 			BackgroundColor3 = Color3.fromRGB(45,29,70)
@@ -232,10 +246,13 @@ local function SetState(state)
 			Position = UDim2.new(1,-25,0,4),
 			BackgroundColor3 = PURPLE
 		},Enum.EasingStyle.Back)
+
 	else
-		Status.Text = "●  RNG LUCK BOOST  •  OFF"
+
+		Status.Text = "●  CRAFT MACHINE  •  OFF"
 		Status.TextColor3 = MUTED
-		Label.Text = "RNG BOOST"
+
+		Label.Text = "MANIPULATE SPAWN"
 
 		Tween(Toggle,.2,{
 			BackgroundColor3 = Color3.fromRGB(29,30,44)
@@ -245,13 +262,17 @@ local function SetState(state)
 			Position = UDim2.fromOffset(4,4),
 			BackgroundColor3 = MUTED
 		},Enum.EasingStyle.Back)
+
 	end
+
 end
 
 --// TOGGLE
 Toggle.MouseButton1Click:Connect(function()
 
-	if Busy then return end
+	if Busy then
+		return
+	end
 
 	Busy = true
 
@@ -262,8 +283,11 @@ Toggle.MouseButton1Click:Connect(function()
 		StartSpinner()
 
 		for _,msg in ipairs(Messages) do
+
 			Status.Text = "●  "..msg
+
 			task.wait(.12)
+
 		end
 
 		SetState(true)
@@ -272,13 +296,16 @@ Toggle.MouseButton1Click:Connect(function()
 
 		StartSpinner()
 
-		Status.Text = "●  Disabling Luck Boost..."
+		Status.Text = "●  Disabling Craft Machine..."
+
 		task.wait(.35)
 
 		SetState(false)
+
 	end
 
 	Busy = false
+
 end)
 
 --// DRAGGING
@@ -296,16 +323,22 @@ Header.InputBegan:Connect(function(input)
 		StartPosition = Main.Position
 
 		input.Changed:Connect(function()
+
 			if input.UserInputState == Enum.UserInputState.End then
 				Dragging = false
 			end
+
 		end)
+
 	end
+
 end)
 
 UIS.InputChanged:Connect(function(input)
 
-	if not Dragging then return end
+	if not Dragging then
+		return
+	end
 
 	if input.UserInputType == Enum.UserInputType.MouseMovement
 	or input.UserInputType == Enum.UserInputType.Touch then
@@ -318,15 +351,18 @@ UIS.InputChanged:Connect(function(input)
 			StartPosition.Y.Scale,
 			StartPosition.Y.Offset + Delta.Y
 		)
+
 	end
+
 end)
 
 --// OPEN ANIMATION
 local FinalSize = Main.Size
+
 Main.Size = UDim2.fromOffset(0,0)
 
 Tween(Main,.4,{
 	Size = FinalSize
 },Enum.EasingStyle.Back)
 
-print("SOFIYA HUB READY")
+print("SOFIYA HUB - CRAFT MACHINE READY")
