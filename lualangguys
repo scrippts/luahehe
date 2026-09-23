@@ -89,7 +89,7 @@ local Subtitle = Instance.new("TextLabel")
 Subtitle.Position = UDim2.fromOffset(14,26)
 Subtitle.Size = UDim2.new(1,-60,0,12)
 Subtitle.BackgroundTransparency = 1
-Subtitle.Text = "CRAFT MACHINE • MANIPULATE SPAWN"
+Subtitle.Text = "CRAFT MACHINE • MANIPULATE STOCK"
 Subtitle.TextColor3 = PURPLE
 Subtitle.TextSize = 7
 Subtitle.Font = Enum.Font.GothamBold
@@ -165,7 +165,7 @@ local Label = Instance.new("TextLabel")
 Label.Position = UDim2.fromOffset(14,82)
 Label.Size = UDim2.new(1,-90,0,29)
 Label.BackgroundTransparency = 1
-Label.Text = "MANIPULATE SPAWN"
+Label.Text = "MANIPULATE STOCK"
 Label.TextColor3 = WHITE
 Label.TextSize = 10
 Label.Font = Enum.Font.GothamBold
@@ -236,7 +236,7 @@ local function SetState(state)
 		Status.Text = "●  CRAFT MACHINE  •  ON"
 		Status.TextColor3 = PURPLE
 
-		Label.Text = "MANIPULATE SPAWN  •  ACTIVE"
+		Label.Text = "MANIPULATE STOCK  •  ACTIVE"
 
 		Tween(Toggle,.2,{
 			BackgroundColor3 = Color3.fromRGB(45,29,70)
@@ -252,7 +252,7 @@ local function SetState(state)
 		Status.Text = "●  CRAFT MACHINE  •  OFF"
 		Status.TextColor3 = MUTED
 
-		Label.Text = "MANIPULATE SPAWN"
+		Label.Text = "MANIPULATE STOCK"
 
 		Tween(Toggle,.2,{
 			BackgroundColor3 = Color3.fromRGB(29,30,44)
